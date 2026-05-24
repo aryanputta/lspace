@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>lunar_scout_thermal_monitor</name>
+  <version>1.0.0</version>
+  <description>
+    LPAS thermal monitoring node — 16-sensor array, heater control,
+    radiator louver control, PSR cold soak modeling, thermal safe mode.
+  </description>
+  <maintainer email="lpas-sw@example.com">LPAS Software Team</maintainer>
+  <license>Apache-2.0</license>
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <depend>diagnostic_msgs</depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

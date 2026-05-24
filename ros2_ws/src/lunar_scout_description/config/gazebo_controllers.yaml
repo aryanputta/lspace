@@ -1,0 +1,211 @@
+# Gazebo ROS2 Control Configuration for Lunar PSR Autonomy Scout
+# Controls all 6 drive wheels plus passive suspension joints
+# 6-wheel drive: 3 per side (front, mid, rear)
+
+controller_manager:
+  ros__parameters:
+    update_rate: 50  # Hz
+
+    # Joint state broadcaster - publishes all joint states
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    # Six-wheel drive velocity controller
+    # Left side wheels
+    front_left_wheel_velocity_controller:
+      type: velocity_controllers/JointVelocityController
+
+    mid_left_wheel_velocity_controller:
+      type: velocity_controllers/JointVelocityController
+
+    rear_left_wheel_velocity_controller:
+      type: velocity_controllers/JointVelocityController
+
+    # Right side wheels
+    front_right_wheel_velocity_controller:
+      type: velocity_controllers/JointVelocityController
+
+    mid_right_wheel_velocity_controller:
+      type: velocity_controllers/JointVelocityController
+
+    rear_right_wheel_velocity_controller:
+      type: velocity_controllers/JointVelocityController
+
+    # HGA azimuth controller
+    hga_position_controller:
+      type: position_controllers/JointPositionController
+
+    # Science drill depth controller
+    science_drill_position_controller:
+      type: position_controllers/JointPositionController
+
+    # Solar array deployment controllers
+    solar_panel_left_position_controller:
+      type: position_controllers/JointPositionController
+
+    solar_panel_right_position_controller:
+      type: position_controllers/JointPositionController
+
+    # IMU sensor broadcaster
+    imu_sensor_broadcaster:
+      type: imu_sensor_broadcaster/ImuSensorBroadcaster
+
+# Individual controller parameters
+front_left_wheel_velocity_controller:
+  ros__parameters:
+    joint: front_left_wheel_joint
+    command_interfaces:
+      - velocity
+    state_interfaces:
+      - velocity
+      - position
+    gains:
+      p: 1.0
+      i: 0.1
+      d: 0.01
+      i_clamp_min: -5.0
+      i_clamp_max: 5.0
+
+mid_left_wheel_velocity_controller:
+  ros__parameters:
+    joint: mid_left_wheel_joint
+    command_interfaces:
+      - velocity
+    state_interfaces:
+      - velocity
+      - position
+    gains:
+      p: 1.0
+      i: 0.1
+      d: 0.01
+      i_clamp_min: -5.0
+      i_clamp_max: 5.0
+
+rear_left_wheel_velocity_controller:
+  ros__parameters:
+    joint: rear_left_wheel_joint
+    command_interfaces:
+      - velocity
+    state_interfaces:
+      - velocity
+      - position
+    gains:
+      p: 1.0
+      i: 0.1
+      d: 0.01
+      i_clamp_min: -5.0
+      i_clamp_max: 5.0
+
+front_right_wheel_velocity_controller:
+  ros__parameters:
+    joint: front_right_wheel_joint
+    command_interfaces:
+      - velocity
+    state_interfaces:
+      - velocity
+      - position
+    gains:
+      p: 1.0
+      i: 0.1
+      d: 0.01
+      i_clamp_min: -5.0
+      i_clamp_max: 5.0
+
+mid_right_wheel_velocity_controller:
+  ros__parameters:
+    joint: mid_right_wheel_joint
+    command_interfaces:
+      - velocity
+    state_interfaces:
+      - velocity
+      - position
+    gains:
+      p: 1.0
+      i: 0.1
+      d: 0.01
+      i_clamp_min: -5.0
+      i_clamp_max: 5.0
+
+rear_right_wheel_velocity_controller:
+  ros__parameters:
+    joint: rear_right_wheel_joint
+    command_interfaces:
+      - velocity
+    state_interfaces:
+      - velocity
+      - position
+    gains:
+      p: 1.0
+      i: 0.1
+      d: 0.01
+      i_clamp_min: -5.0
+      i_clamp_max: 5.0
+
+hga_position_controller:
+  ros__parameters:
+    joint: hga_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    gains:
+      p: 5.0
+      i: 0.5
+      d: 0.1
+
+science_drill_position_controller:
+  ros__parameters:
+    joint: science_drill_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    gains:
+      p: 20.0
+      i: 1.0
+      d: 0.5
+
+solar_panel_left_position_controller:
+  ros__parameters:
+    joint: solar_panel_left_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    gains:
+      p: 3.0
+      i: 0.1
+      d: 0.05
+
+solar_panel_right_position_controller:
+  ros__parameters:
+    joint: solar_panel_right_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    gains:
+      p: 3.0
+      i: 0.1
+      d: 0.05
+
+imu_sensor_broadcaster:
+  ros__parameters:
+    sensor_name: imu_sensor
+    frame_id: imu_link
+    static_covariance_orientation:
+      [0.0001, 0.0, 0.0,
+       0.0, 0.0001, 0.0,
+       0.0, 0.0, 0.0001]
+    static_covariance_angular_velocity:
+      [0.00003, 0.0, 0.0,
+       0.0, 0.00003, 0.0,
+       0.0, 0.0, 0.00003]
+    static_covariance_linear_acceleration:
+      [0.001, 0.0, 0.0,
+       0.0, 0.001, 0.0,
+       0.0, 0.0, 0.001]

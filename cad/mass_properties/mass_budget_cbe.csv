@@ -1,0 +1,67 @@
+Subsystem,Component,CBE_kg,Margin_pct,MEV_kg,Heritage,Notes
+Chassis & Structure,Primary chassis frame,28.5,12,31.9,New design,Al-7075 honeycomb panels
+Chassis & Structure,Titanium wheel mounts (6x),4.2,10,4.6,Rocker-bogie heritage,Grade 5 Ti
+Chassis & Structure,Rocker-bogie suspension arms,6.8,12,7.6,Curiosity/VIPER heritage,Al-6061-T6
+Chassis & Structure,Fasteners and inserts,2.1,15,2.4,Standard,Stainless A286
+Chassis & Structure,Electronics bay enclosure,3.4,10,3.7,New design,Al-honeycomb + Ti frame
+Chassis Subtotal,,45.0,11.6,50.2,,
+Mobility,Wheel assemblies (6x mesh wheels),9.6,12,10.8,VIPER wheel heritage,Ti mesh 25cm radius
+Mobility,Wheel drive motors (6x),5.4,10,5.9,COTS brushless,50W each
+Mobility,Motor controllers (6x),1.8,10,2.0,COTS,Integrated with motor
+Mobility,Encoders and sensors,1.2,10,1.3,COTS,Optical encoders
+Mobility Subtotal,,18.0,10.9,20.0,,
+Power System,Solar array panels (2x deployable),8.4,12,9.4,CLPS heritage,GaAs triple-junction
+Power System,Solar array deployment mechanism,2.2,15,2.5,New design,Single-axis motorized
+Power System,Battery pack (LFP, 150Wh),9.8,10,10.8,Flight-qualified cells,4S3P configuration
+Power System,Power Control and Distribution Unit (PCDU),3.6,12,4.0,Space heritage,28V primary bus
+Power System,Battery thermal heaters,0.8,10,0.9,Standard,RHU-equivalent PTC heaters
+Power System,Wiring harness (power),1.2,15,1.4,Standard,Teflon-insulated
+Power Subtotal,,26.0,11.5,29.0,,
+Thermal Control,MLI blankets (15-layer),2.4,15,2.8,Standard,Aluminized Mylar + Dacron
+Thermal Control,Thermal radiator panels,1.8,12,2.0,Standard,OSR coating
+Thermal Control,Thermal straps (Al braided),0.6,10,0.7,Standard,6 straps
+Thermal Control,Heater assemblies,0.9,10,1.0,Space heritage,Kapton patch heaters
+Thermal Control,Thermal sensors (16x),0.3,10,0.3,COTS,PT100 RTDs
+Thermal Subtotal,,6.0,11.7,6.7,,
+Avionics & Software,Main Flight Computer (x2 redundant),1.8,10,2.0,Radiation-hardened,LEON4 equivalent
+Avionics & Software,IMU (primary + backup),0.8,10,0.9,Space heritage,6-DOF MEMS
+Avionics & Software,Star tracker,0.4,10,0.4,COTS,Autonomous nav backup
+Avionics & Software,Wiring harness (data),1.5,15,1.7,Standard,
+Avionics & Software,Interface electronics,0.5,12,0.6,COTS,SpaceWire interface
+Avionics Subtotal,,5.0,11.3,5.6,,
+Communications,UHF radio transceiver,0.8,10,0.9,Space heritage,Iris V2 heritage
+Communications,UHF antenna (patch array),0.4,10,0.4,Standard,
+Communications,HGA gimbal mechanism,2.1,15,2.4,COTS adapted,Two-axis gimbal
+Communications,HGA reflector (0.5m),1.2,10,1.3,Standard,Carbon fiber
+Communications,RF cabling and connectors,0.5,15,0.6,Standard,
+Comms Subtotal,,5.0,11.4,5.6,,
+Navigation Sensors,Stereo navigation cameras (pair),0.9,10,1.0,COTS radiation-hardened,FLIR Blackfly heritage
+Navigation Sensors,Hazard cameras (front+rear pair),0.6,10,0.7,MSL/Perseverance heritage,
+Navigation Sensors,3D LIDAR (VLP-16 heritage),0.85,12,0.95,COTS adapted,Solid-state preferred
+Navigation Sensors,Thermal IR camera,0.4,10,0.4,COTS,FLIR Lepton heritage
+Navigation Sensors,Wheel encoders (6x),0.25,10,0.3,COTS,Included in mobility
+Navigation Subtotal,,3.0,11.0,3.3,,
+Science Payload,Drill system (TRIDENT-inspired),8.5,15,9.8,VIPER TRIDENT heritage,0-1m depth
+Science Payload,Sample handling mechanism,3.2,15,3.7,New design,
+Science Payload,Neutron spectrometer (PITMS-inspired),4.8,12,5.4,LRO/LCROSS heritage,
+Science Payload,Mass spectrometer,3.5,12,3.9,LADEE heritage,Volatile detection
+Science Payload,Science cameras (macro imaging),0.8,10,0.9,COTS,Sample documentation
+Science Payload,Raman spectrometer,1.2,12,1.3,ExoMars heritage,Mineral ID
+Science Subtotal,,22.0,13.4,24.9,,
+Miscellaneous,Dust mitigation covers,0.5,20,0.6,,
+Miscellaneous,Calibration targets,0.3,15,0.3,,
+Miscellaneous,Deployment mechanisms (non-solar),1.2,15,1.4,,
+Misc Subtotal,,2.0,16.7,2.3,,
+,,,,,,
+SYSTEM DRY MASS,,132.0,11.8,147.7,,
+System Mass Margin,,19.8,15.0,22.2,,Sum of subsystem MEV - CBE
+,,,,,,
+TOTAL SYSTEM MASS CBE,,132.0,,,Meets < 250kg requirement
+TOTAL SYSTEM MASS MEV,,147.7,,,With full margins applied
+MASS MARGIN REMAINING,,102.3,,,Significant margin to 250kg cap
+,,,,,,
+Notes:,,,,,
+"CBE = Current Best Estimate (no margin applied)",,,,,,
+"MEV = Maximum Expected Value (with margin applied)",,,,,,
+"Margin policy: 15% for new designs, 10% for heritage designs",,,,,,
+"Heritage items per NASA mass margin policy (NPR 7120.5E)",,,,,,

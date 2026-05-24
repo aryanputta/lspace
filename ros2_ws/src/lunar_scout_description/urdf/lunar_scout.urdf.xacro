@@ -1,0 +1,1117 @@
+<?xml version="1.0"?>
+<!--
+  Lunar PSR Autonomy Scout - Complete URDF/XACRO Description
+  ============================================================
+  NASA-grade lunar rover designed for exploration of Permanently Shadowed Regions (PSR).
+  Rocker-bogie suspension inspired by MSL/Mars 2020 heritage design.
+  Mass budget: ~150 kg (chassis + payload + propulsion)
+  Power: 200W peak solar, 150 Wh Li-Ion battery pack
+  Science payload: Drill, Neutron Spectrometer, Thermal IR Camera
+-->
+<robot name="lunar_scout" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- ============================================================
+       PROPERTIES AND CONSTANTS
+       ============================================================ -->
+  <xacro:property name="PI" value="3.14159265358979"/>
+
+  <!-- Chassis dimensions (aluminum honeycomb structure) -->
+  <xacro:property name="chassis_length"    value="1.60"/>
+  <xacro:property name="chassis_width"     value="1.00"/>
+  <xacro:property name="chassis_height"    value="0.40"/>
+  <xacro:property name="chassis_mass"      value="60.0"/>
+
+  <!-- Wheel properties (titanium mesh wheels) -->
+  <xacro:property name="wheel_radius"      value="0.25"/>
+  <xacro:property name="wheel_width"       value="0.12"/>
+  <xacro:property name="wheel_mass"        value="3.5"/>
+
+  <!-- Rocker-bogie geometry -->
+  <xacro:property name="rocker_length"     value="0.55"/>
+  <xacro:property name="rocker_height"     value="0.08"/>
+  <xacro:property name="rocker_width"      value="0.06"/>
+  <xacro:property name="rocker_mass"       value="4.0"/>
+
+  <xacro:property name="bogie_length"      value="0.45"/>
+  <xacro:property name="bogie_height"      value="0.06"/>
+  <xacro:property name="bogie_width"       value="0.05"/>
+  <xacro:property name="bogie_mass"        value="3.0"/>
+
+  <!-- Wheelbase and track -->
+  <xacro:property name="wheelbase"         value="1.20"/>
+  <xacro:property name="track_width"       value="1.40"/>
+  <xacro:property name="side_offset"       value="0.70"/>
+
+  <!-- Front wheel offset from rocker pivot -->
+  <xacro:property name="front_wheel_x"     value="0.60"/>
+  <!-- Rear bogie offset -->
+  <xacro:property name="rear_wheel_x"      value="-0.60"/>
+  <!-- Mid wheel offset -->
+  <xacro:property name="mid_wheel_x"       value="0.0"/>
+
+  <!-- Vertical drop from body to wheel center -->
+  <xacro:property name="wheel_z_offset"    value="-0.35"/>
+
+  <!-- Sensor positions -->
+  <xacro:property name="imu_x"             value="0.0"/>
+  <xacro:property name="imu_y"             value="0.0"/>
+  <xacro:property name="imu_z"             value="0.05"/>
+
+  <xacro:property name="lidar_x"           value="0.40"/>
+  <xacro:property name="lidar_y"           value="0.0"/>
+  <xacro:property name="lidar_z"           value="0.35"/>
+
+  <xacro:property name="nav_cam_baseline"  value="0.30"/>
+  <xacro:property name="nav_cam_x"         value="0.55"/>
+  <xacro:property name="nav_cam_z"         value="0.30"/>
+
+  <xacro:property name="hazard_cam_x_front" value="0.75"/>
+  <xacro:property name="hazard_cam_x_rear"  value="-0.75"/>
+  <xacro:property name="hazard_cam_z"       value="0.15"/>
+
+  <!-- ============================================================
+       INERTIA MACROS
+       ============================================================ -->
+  <xacro:macro name="box_inertia" params="m x y z">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia
+        ixx="${m*(y*y+z*z)/12.0}"
+        ixy="0.0" ixz="0.0"
+        iyy="${m*(x*x+z*z)/12.0}"
+        iyz="0.0"
+        izz="${m*(x*x+y*y)/12.0}"/>
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="cylinder_inertia" params="m r h">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia
+        ixx="${m*(3*r*r+h*h)/12.0}"
+        ixy="0.0" ixz="0.0"
+        iyy="${m*(3*r*r+h*h)/12.0}"
+        iyz="0.0"
+        izz="${m*r*r/2.0}"/>
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="sphere_inertia" params="m r">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia
+        ixx="${2*m*r*r/5.0}"
+        ixy="0.0" ixz="0.0"
+        iyy="${2*m*r*r/5.0}"
+        iyz="0.0"
+        izz="${2*m*r*r/5.0}"/>
+    </inertial>
+  </xacro:macro>
+
+  <!-- ============================================================
+       MATERIAL DEFINITIONS
+       ============================================================ -->
+  <material name="aluminum_gold">
+    <color rgba="0.85 0.72 0.30 1.0"/>
+  </material>
+  <material name="titanium_mesh">
+    <color rgba="0.75 0.75 0.78 0.85"/>
+  </material>
+  <material name="carbon_fiber">
+    <color rgba="0.15 0.15 0.15 1.0"/>
+  </material>
+  <material name="white_thermal">
+    <color rgba="0.92 0.92 0.92 1.0"/>
+  </material>
+  <material name="solar_panel_blue">
+    <color rgba="0.10 0.15 0.45 1.0"/>
+  </material>
+  <material name="sensor_black">
+    <color rgba="0.1 0.1 0.1 1.0"/>
+  </material>
+  <material name="antenna_white">
+    <color rgba="0.95 0.95 0.95 1.0"/>
+  </material>
+  <material name="science_gray">
+    <color rgba="0.55 0.55 0.60 1.0"/>
+  </material>
+
+  <!-- ============================================================
+       WHEEL MACRO
+       ============================================================ -->
+  <xacro:macro name="wheel" params="prefix side reflect_y">
+    <link name="${prefix}_${side}_wheel">
+      <xacro:cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_width}"/>
+      <visual>
+        <origin xyz="0 0 0" rpy="${PI/2} 0 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+        <material name="titanium_mesh"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="${PI/2} 0 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- Wheel drive joint (continuous for wheel spin) -->
+    <joint name="${prefix}_${side}_wheel_joint" type="continuous">
+      <parent link="${prefix}_${side}_bogie"/>
+      <child  link="${prefix}_${side}_wheel"/>
+      <origin xyz="${mid_wheel_x} ${reflect_y * (bogie_width/2 + wheel_width/2 + 0.02)} ${wheel_z_offset}" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <dynamics damping="0.5" friction="1.0"/>
+      <limit effort="30.0" velocity="10.0"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- ============================================================
+       ROCKER-BOGIE SUSPENSION MACRO
+       ============================================================ -->
+  <xacro:macro name="suspension_side" params="side reflect_y">
+
+    <!-- === ROCKER LINK === -->
+    <link name="${side}_rocker">
+      <xacro:box_inertia m="${rocker_mass}" x="${rocker_length}" y="${rocker_width}" z="${rocker_height}"/>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="${rocker_length} ${rocker_width} ${rocker_height}"/>
+        </geometry>
+        <material name="carbon_fiber"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="${rocker_length} ${rocker_width} ${rocker_height}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- Rocker pivot joint (revolute about Y, allows rocker to pitch) -->
+    <joint name="${side}_rocker_joint" type="revolute">
+      <parent link="base_link"/>
+      <child  link="${side}_rocker"/>
+      <origin xyz="0.10 ${reflect_y * side_offset} ${wheel_z_offset + wheel_radius + 0.02}" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit lower="-0.4" upper="0.4" effort="0.0" velocity="1.0"/>
+      <dynamics damping="1.0" friction="0.5"/>
+    </joint>
+
+    <!-- === FRONT WHEEL (directly on rocker) === -->
+    <link name="front_${side}_wheel">
+      <xacro:cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_width}"/>
+      <visual>
+        <origin xyz="0 0 0" rpy="${PI/2} 0 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+        <material name="titanium_mesh"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="${PI/2} 0 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.85</mu>
+              <mu2>0.65</mu2>
+              <fdir1>1 0 0</fdir1>
+              <slip1>0.0</slip1>
+              <slip2>0.0</slip2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <kp>1e6</kp>
+              <kd>100.0</kd>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+    </link>
+
+    <joint name="front_${side}_wheel_joint" type="continuous">
+      <parent link="${side}_rocker"/>
+      <child  link="front_${side}_wheel"/>
+      <origin xyz="${front_wheel_x} ${reflect_y * (rocker_width/2 + wheel_width/2 + 0.02)} ${-(wheel_radius + 0.02)}" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <dynamics damping="0.5" friction="1.0"/>
+      <limit effort="30.0" velocity="10.0"/>
+    </joint>
+
+    <!-- === BOGIE LINK (rear half of suspension) === -->
+    <link name="${side}_bogie">
+      <xacro:box_inertia m="${bogie_mass}" x="${bogie_length}" y="${bogie_width}" z="${bogie_height}"/>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="${bogie_length} ${bogie_width} ${bogie_height}"/>
+        </geometry>
+        <material name="carbon_fiber"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="${bogie_length} ${bogie_width} ${bogie_height}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- Bogie pivot joint (revolute about Y axis) -->
+    <joint name="${side}_bogie_joint" type="revolute">
+      <parent link="${side}_rocker"/>
+      <child  link="${side}_bogie"/>
+      <origin xyz="${-rocker_length/4} 0 ${-(wheel_radius/2)}" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <limit lower="-0.5" upper="0.5" effort="0.0" velocity="1.0"/>
+      <dynamics damping="0.8" friction="0.3"/>
+    </joint>
+
+    <!-- === MID WHEEL (front of bogie) === -->
+    <link name="mid_${side}_wheel">
+      <xacro:cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_width}"/>
+      <visual>
+        <origin xyz="0 0 0" rpy="${PI/2} 0 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+        <material name="titanium_mesh"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="${PI/2} 0 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.85</mu>
+              <mu2>0.65</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+    </link>
+
+    <joint name="mid_${side}_wheel_joint" type="continuous">
+      <parent link="${side}_bogie"/>
+      <child  link="mid_${side}_wheel"/>
+      <origin xyz="${bogie_length/4} ${reflect_y * (bogie_width/2 + wheel_width/2 + 0.02)} ${-(wheel_radius + 0.01)}" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <dynamics damping="0.5" friction="1.0"/>
+      <limit effort="30.0" velocity="10.0"/>
+    </joint>
+
+    <!-- === REAR WHEEL (rear of bogie) === -->
+    <link name="rear_${side}_wheel">
+      <xacro:cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_width}"/>
+      <visual>
+        <origin xyz="0 0 0" rpy="${PI/2} 0 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+        <material name="titanium_mesh"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="${PI/2} 0 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0.85</mu>
+              <mu2>0.65</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+    </link>
+
+    <joint name="rear_${side}_wheel_joint" type="continuous">
+      <parent link="${side}_bogie"/>
+      <child  link="rear_${side}_wheel"/>
+      <origin xyz="${-bogie_length/4} ${reflect_y * (bogie_width/2 + wheel_width/2 + 0.02)} ${-(wheel_radius + 0.01)}" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <dynamics damping="0.5" friction="1.0"/>
+      <limit effort="30.0" velocity="10.0"/>
+    </joint>
+
+  </xacro:macro>
+
+  <!-- ============================================================
+       SOLAR ARRAY MACRO
+       ============================================================ -->
+  <xacro:macro name="solar_panel" params="side reflect_y">
+    <link name="solar_panel_${side}">
+      <xacro:box_inertia m="4.0" x="1.20" y="0.80" z="0.02"/>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="1.20 0.80 0.02"/>
+        </geometry>
+        <material name="solar_panel_blue"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="1.20 0.80 0.02"/>
+        </geometry>
+      </collision>
+    </link>
+    <!-- Deployable hinge joint for solar panel -->
+    <joint name="solar_panel_${side}_joint" type="revolute">
+      <parent link="base_link"/>
+      <child  link="solar_panel_${side}"/>
+      <origin xyz="0.0 ${reflect_y * (chassis_width/2 + 0.05)} 0.22" rpy="0 ${-PI/2 * reflect_y} 0"/>
+      <axis xyz="1 0 0"/>
+      <limit lower="0.0" upper="${PI/2}" effort="5.0" velocity="0.2"/>
+      <dynamics damping="2.0" friction="1.0"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- ============================================================
+       BASE / CHASSIS LINK
+       ============================================================ -->
+  <link name="base_footprint"/>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child  link="base_link"/>
+    <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <link name="base_link">
+    <!-- Aluminum honeycomb chassis with thermal insulation blankets (MLI) -->
+    <inertial>
+      <mass value="${chassis_mass}"/>
+      <!-- Non-uniform inertia (payload concentrated at center-rear) -->
+      <inertia
+        ixx="${chassis_mass*(chassis_width*chassis_width+chassis_height*chassis_height)/12.0}"
+        ixy="0.0" ixz="-0.8"
+        iyy="${chassis_mass*(chassis_length*chassis_length+chassis_height*chassis_height)/12.0}"
+        iyz="0.0"
+        izz="${chassis_mass*(chassis_length*chassis_length+chassis_width*chassis_width)/12.0}"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
+      </geometry>
+      <material name="aluminum_gold"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Electronics bay thermal shroud (MLI blanket representation) -->
+  <link name="electronics_bay">
+    <xacro:box_inertia m="15.0" x="0.50" y="0.80" z="0.30"/>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.50 0.80 0.30"/>
+      </geometry>
+      <material name="white_thermal"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.50 0.80 0.30"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="electronics_bay_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="electronics_bay"/>
+    <origin xyz="-0.15 0 ${chassis_height/2 + 0.15}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ============================================================
+       ROCKER-BOGIE SUSPENSION (BOTH SIDES)
+       ============================================================ -->
+  <xacro:suspension_side side="left"  reflect_y="1"/>
+  <xacro:suspension_side side="right" reflect_y="-1"/>
+
+  <!-- ============================================================
+       IMU SENSOR
+       ============================================================ -->
+  <link name="imu_link">
+    <xacro:box_inertia m="0.05" x="0.04" y="0.04" z="0.01"/>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.04 0.04 0.01"/>
+      </geometry>
+      <material name="sensor_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.04 0.04 0.01"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="imu_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="imu_link"/>
+    <origin xyz="${imu_x} ${imu_y} ${imu_z}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ============================================================
+       LIDAR (Velodyne VLP-16 style)
+       ============================================================ -->
+  <link name="lidar_link">
+    <xacro:cylinder_inertia m="0.83" r="0.051" h="0.072"/>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.051" length="0.072"/>
+      </geometry>
+      <material name="sensor_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.055" length="0.080"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="lidar_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="lidar_link"/>
+    <origin xyz="${lidar_x} ${lidar_y} ${lidar_z}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ============================================================
+       NAVIGATION CAMERAS (Stereo pair, 0.3m baseline)
+       ============================================================ -->
+  <!-- NAV CAM MAST (support structure) -->
+  <link name="nav_cam_mast">
+    <xacro:box_inertia m="0.8" x="0.04" y="0.04" z="0.35"/>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.04 0.04 0.35"/>
+      </geometry>
+      <material name="carbon_fiber"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.04 0.04 0.35"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="nav_cam_mast_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="nav_cam_mast"/>
+    <origin xyz="${nav_cam_x} 0 ${chassis_height/2 + 0.175}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- LEFT NAV CAM -->
+  <link name="nav_cam_left_link">
+    <xacro:box_inertia m="0.22" x="0.05" y="0.05" z="0.06"/>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.05 0.05 0.06"/>
+      </geometry>
+      <material name="sensor_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.05 0.05 0.06"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="nav_cam_left_joint" type="fixed">
+    <parent link="nav_cam_mast"/>
+    <child  link="nav_cam_left_link"/>
+    <origin xyz="0 ${nav_cam_baseline/2} ${0.35/2}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- RIGHT NAV CAM -->
+  <link name="nav_cam_right_link">
+    <xacro:box_inertia m="0.22" x="0.05" y="0.05" z="0.06"/>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.05 0.05 0.06"/>
+      </geometry>
+      <material name="sensor_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.05 0.05 0.06"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="nav_cam_right_joint" type="fixed">
+    <parent link="nav_cam_mast"/>
+    <child  link="nav_cam_right_link"/>
+    <origin xyz="0 ${-nav_cam_baseline/2} ${0.35/2}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ============================================================
+       HAZARD CAMERAS (Front + Rear)
+       ============================================================ -->
+  <!-- Front hazcam (wide angle, downward-tilted 30 deg) -->
+  <link name="hazcam_front_link">
+    <xacro:box_inertia m="0.18" x="0.04" y="0.06" z="0.04"/>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.04 0.06 0.04"/>
+      </geometry>
+      <material name="sensor_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.04 0.06 0.04"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="hazcam_front_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="hazcam_front_link"/>
+    <origin xyz="${hazard_cam_x_front} 0 ${hazard_cam_z}" rpy="0 ${PI/6} 0"/>
+  </joint>
+
+  <!-- Rear hazcam -->
+  <link name="hazcam_rear_link">
+    <xacro:box_inertia m="0.18" x="0.04" y="0.06" z="0.04"/>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.04 0.06 0.04"/>
+      </geometry>
+      <material name="sensor_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.04 0.06 0.04"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="hazcam_rear_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="hazcam_rear_link"/>
+    <origin xyz="${hazard_cam_x_rear} 0 ${hazard_cam_z}" rpy="0 ${-PI/6} ${PI}"/>
+  </joint>
+
+  <!-- ============================================================
+       UHF ANTENNA (omnidirectional, relay comms)
+       ============================================================ -->
+  <link name="uhf_antenna_link">
+    <xacro:cylinder_inertia m="0.35" r="0.015" h="0.40"/>
+    <visual>
+      <origin xyz="0 0 0.20" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.015" length="0.40"/>
+      </geometry>
+      <material name="antenna_white"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.20" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.015" length="0.40"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="uhf_antenna_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="uhf_antenna_link"/>
+    <origin xyz="-0.50 0.35 ${chassis_height/2}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ============================================================
+       HGA - High Gain Antenna (directional, X-band DTE comms)
+       ============================================================ -->
+  <link name="hga_link">
+    <!-- Parabolic dish approximated as cylinder + cone -->
+    <xacro:cylinder_inertia m="1.2" r="0.22" h="0.05"/>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.22" length="0.05"/>
+      </geometry>
+      <material name="antenna_white"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.22" length="0.05"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="hga_joint" type="revolute">
+    <parent link="base_link"/>
+    <child  link="hga_link"/>
+    <origin xyz="-0.65 0.0 ${chassis_height/2 + 0.30}" rpy="0 ${PI/4} 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="${-PI/3}" upper="${PI/3}" effort="2.0" velocity="0.1"/>
+    <dynamics damping="1.0" friction="0.5"/>
+  </joint>
+
+  <!-- ============================================================
+       SOLAR PANELS (deployable)
+       ============================================================ -->
+  <xacro:solar_panel side="left"  reflect_y="1"/>
+  <xacro:solar_panel side="right" reflect_y="-1"/>
+
+  <!-- ============================================================
+       SCIENCE PAYLOAD: DRILL
+       ============================================================ -->
+  <link name="science_drill_link">
+    <xacro:cylinder_inertia m="8.0" r="0.04" h="0.60"/>
+    <visual>
+      <origin xyz="0 0 -0.30" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.04" length="0.60"/>
+      </geometry>
+      <material name="science_gray"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.30" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.04" length="0.60"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="science_drill_joint" type="prismatic">
+    <parent link="base_link"/>
+    <child  link="science_drill_link"/>
+    <origin xyz="0.60 -0.25 ${-chassis_height/2 + 0.05}" rpy="0 0 0"/>
+    <axis xyz="0 0 -1"/>
+    <limit lower="0.0" upper="0.50" effort="50.0" velocity="0.02"/>
+    <dynamics damping="5.0" friction="2.0"/>
+  </joint>
+
+  <!-- ============================================================
+       SCIENCE PAYLOAD: NEUTRON SPECTROMETER
+       ============================================================ -->
+  <link name="neutron_spectrometer_link">
+    <xacro:box_inertia m="1.8" x="0.12" y="0.08" z="0.10"/>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.12 0.08 0.10"/>
+      </geometry>
+      <material name="science_gray"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.12 0.08 0.10"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="neutron_spectrometer_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="neutron_spectrometer_link"/>
+    <origin xyz="0.55 0.25 ${-chassis_height/2 - 0.05}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ============================================================
+       SCIENCE PAYLOAD: THERMAL IR CAMERA
+       ============================================================ -->
+  <link name="thermal_ir_camera_link">
+    <xacro:box_inertia m="0.45" x="0.06" y="0.06" z="0.08"/>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.06 0.06 0.08"/>
+      </geometry>
+      <material name="sensor_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.06 0.06 0.08"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="thermal_ir_camera_joint" type="fixed">
+    <parent link="nav_cam_mast"/>
+    <child  link="thermal_ir_camera_link"/>
+    <origin xyz="0.03 0 0.10" rpy="0 ${PI/12} 0"/>
+  </joint>
+
+  <!-- ============================================================
+       ROS2 CONTROL PLUGIN
+       ============================================================ -->
+  <ros2_control name="lunar_scout_hardware" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+
+    <!-- Front left wheel -->
+    <joint name="front_left_wheel_joint">
+      <command_interface name="velocity">
+        <param name="min">-10.0</param>
+        <param name="max">10.0</param>
+      </command_interface>
+      <state_interface name="velocity"/>
+      <state_interface name="position"/>
+    </joint>
+
+    <!-- Front right wheel -->
+    <joint name="front_right_wheel_joint">
+      <command_interface name="velocity">
+        <param name="min">-10.0</param>
+        <param name="max">10.0</param>
+      </command_interface>
+      <state_interface name="velocity"/>
+      <state_interface name="position"/>
+    </joint>
+
+    <!-- Mid left wheel -->
+    <joint name="mid_left_wheel_joint">
+      <command_interface name="velocity">
+        <param name="min">-10.0</param>
+        <param name="max">10.0</param>
+      </command_interface>
+      <state_interface name="velocity"/>
+      <state_interface name="position"/>
+    </joint>
+
+    <!-- Mid right wheel -->
+    <joint name="mid_right_wheel_joint">
+      <command_interface name="velocity">
+        <param name="min">-10.0</param>
+        <param name="max">10.0</param>
+      </command_interface>
+      <state_interface name="velocity"/>
+      <state_interface name="position"/>
+    </joint>
+
+    <!-- Rear left wheel -->
+    <joint name="rear_left_wheel_joint">
+      <command_interface name="velocity">
+        <param name="min">-10.0</param>
+        <param name="max">10.0</param>
+      </command_interface>
+      <state_interface name="velocity"/>
+      <state_interface name="position"/>
+    </joint>
+
+    <!-- Rear right wheel -->
+    <joint name="rear_right_wheel_joint">
+      <command_interface name="velocity">
+        <param name="min">-10.0</param>
+        <param name="max">10.0</param>
+      </command_interface>
+      <state_interface name="velocity"/>
+      <state_interface name="position"/>
+    </joint>
+
+    <!-- Passive rocker joints (state only) -->
+    <joint name="left_rocker_joint">
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="right_rocker_joint">
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="left_bogie_joint">
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="right_bogie_joint">
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <!-- ============================================================
+       GAZEBO PLUGIN: ROS2 CONTROL
+       ============================================================ -->
+  <gazebo>
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+      <robot_sim_type>gazebo_ros2_control/GazeboSystem</robot_sim_type>
+      <parameters>$(find lunar_scout_description)/config/gazebo_controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+  <!-- ============================================================
+       GAZEBO PLUGIN: IMU SENSOR
+       ============================================================ -->
+  <gazebo reference="imu_link">
+    <sensor name="imu_sensor" type="imu">
+      <always_on>true</always_on>
+      <update_rate>100</update_rate>
+      <visualize>false</visualize>
+      <topic>/imu/data</topic>
+      <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+        <topicName>/imu/data</topicName>
+        <bodyName>imu_link</bodyName>
+        <updateRateHZ>100.0</updateRateHZ>
+        <gaussianNoise>0.00005</gaussianNoise>
+        <xyzOffset>0 0 0</xyzOffset>
+        <rpyOffset>0 0 0</rpyOffset>
+        <frameName>imu_link</frameName>
+        <initialOrientationAsReference>false</initialOrientationAsReference>
+      </plugin>
+      <pose>0 0 0 0 0 0</pose>
+    </sensor>
+  </gazebo>
+
+  <!-- ============================================================
+       GAZEBO PLUGIN: LIDAR (Velodyne VLP-16)
+       ============================================================ -->
+  <gazebo reference="lidar_link">
+    <sensor name="velodyne_vlp16" type="ray">
+      <always_on>true</always_on>
+      <visualize>false</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>1800</samples>
+            <resolution>1</resolution>
+            <min_angle>-3.14159</min_angle>
+            <max_angle>3.14159</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>16</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.261799</min_angle>
+            <max_angle>0.261799</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.10</min>
+          <max>100.0</max>
+          <resolution>0.001</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.008</stddev>
+        </noise>
+      </ray>
+      <plugin filename="libgazebo_ros_ray_sensor.so" name="lidar_plugin">
+        <ros>
+          <namespace>/</namespace>
+          <remapping>~/out:=/lidar/points</remapping>
+        </ros>
+        <output_type>sensor_msgs/PointCloud2</output_type>
+        <frame_name>lidar_link</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- ============================================================
+       GAZEBO PLUGIN: LEFT NAV CAM
+       ============================================================ -->
+  <gazebo reference="nav_cam_left_link">
+    <sensor name="nav_cam_left" type="camera">
+      <always_on>true</always_on>
+      <visualize>false</visualize>
+      <update_rate>10</update_rate>
+      <camera name="nav_cam_left">
+        <horizontal_fov>1.3962634</horizontal_fov>
+        <image>
+          <width>1280</width>
+          <height>960</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.02</near>
+          <far>300</far>
+        </clip>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.002</stddev>
+        </noise>
+      </camera>
+      <plugin filename="libgazebo_ros_camera.so" name="nav_cam_left_plugin">
+        <ros>
+          <remapping>image_raw:=/nav_cam/left/image_raw</remapping>
+          <remapping>camera_info:=/nav_cam/left/camera_info</remapping>
+        </ros>
+        <camera_name>nav_cam_left</camera_name>
+        <frame_name>nav_cam_left_link</frame_name>
+        <hack_baseline>0.0</hack_baseline>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- ============================================================
+       GAZEBO PLUGIN: RIGHT NAV CAM
+       ============================================================ -->
+  <gazebo reference="nav_cam_right_link">
+    <sensor name="nav_cam_right" type="camera">
+      <always_on>true</always_on>
+      <visualize>false</visualize>
+      <update_rate>10</update_rate>
+      <camera name="nav_cam_right">
+        <horizontal_fov>1.3962634</horizontal_fov>
+        <image>
+          <width>1280</width>
+          <height>960</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.02</near>
+          <far>300</far>
+        </clip>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.002</stddev>
+        </noise>
+      </camera>
+      <plugin filename="libgazebo_ros_camera.so" name="nav_cam_right_plugin">
+        <ros>
+          <remapping>image_raw:=/nav_cam/right/image_raw</remapping>
+          <remapping>camera_info:=/nav_cam/right/camera_info</remapping>
+        </ros>
+        <camera_name>nav_cam_right</camera_name>
+        <frame_name>nav_cam_right_link</frame_name>
+        <hack_baseline>${nav_cam_baseline}</hack_baseline>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- ============================================================
+       GAZEBO PLUGIN: FRONT HAZCAM
+       ============================================================ -->
+  <gazebo reference="hazcam_front_link">
+    <sensor name="hazcam_front" type="camera">
+      <always_on>true</always_on>
+      <visualize>false</visualize>
+      <update_rate>5</update_rate>
+      <camera name="hazcam_front">
+        <horizontal_fov>2.0944</horizontal_fov>  <!-- 120 degrees -->
+        <image>
+          <width>640</width>
+          <height>480</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.05</near>
+          <far>10</far>
+        </clip>
+      </camera>
+      <plugin filename="libgazebo_ros_camera.so" name="hazcam_front_plugin">
+        <ros>
+          <remapping>image_raw:=/hazcam/front/image_raw</remapping>
+          <remapping>camera_info:=/hazcam/front/camera_info</remapping>
+        </ros>
+        <camera_name>hazcam_front</camera_name>
+        <frame_name>hazcam_front_link</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- ============================================================
+       GAZEBO PLUGIN: REAR HAZCAM
+       ============================================================ -->
+  <gazebo reference="hazcam_rear_link">
+    <sensor name="hazcam_rear" type="camera">
+      <always_on>true</always_on>
+      <visualize>false</visualize>
+      <update_rate>5</update_rate>
+      <camera name="hazcam_rear">
+        <horizontal_fov>2.0944</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.05</near>
+          <far>10</far>
+        </clip>
+      </camera>
+      <plugin filename="libgazebo_ros_camera.so" name="hazcam_rear_plugin">
+        <ros>
+          <remapping>image_raw:=/hazcam/rear/image_raw</remapping>
+          <remapping>camera_info:=/hazcam/rear/camera_info</remapping>
+        </ros>
+        <camera_name>hazcam_rear</camera_name>
+        <frame_name>hazcam_rear_link</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- ============================================================
+       GAZEBO PLUGIN: GPS (Simulated lunar positioning)
+       ============================================================ -->
+  <gazebo>
+    <plugin filename="libgazebo_ros_gps_sensor.so" name="gps_plugin">
+      <ros>
+        <remapping>~/out:=/gps/fix</remapping>
+      </ros>
+      <link_name>base_link</link_name>
+      <update_rate>1</update_rate>
+      <frame_name>base_link</frame_name>
+      <!-- Lunar coordinate reference (Shackleton Crater rim, South Pole) -->
+      <latitude_deg>-89.9</latitude_deg>
+      <longitude_deg>0.0</longitude_deg>
+      <altitude>1800.0</altitude>
+      <drift>0.001 0.001 0.001</drift>
+      <gaussian_noise>0.01 0.01 0.01</gaussian_noise>
+      <velocity_drift>0.0001 0.0001 0.0001</velocity_drift>
+      <velocity_gaussian_noise>0.005 0.005 0.005</velocity_gaussian_noise>
+    </plugin>
+  </gazebo>
+
+  <!-- ============================================================
+       GAZEBO MATERIAL OVERRIDES
+       ============================================================ -->
+  <gazebo reference="base_link">
+    <material>Gazebo/Gold</material>
+    <mu1>0.8</mu1>
+    <mu2>0.8</mu2>
+  </gazebo>
+
+  <gazebo reference="electronics_bay">
+    <material>Gazebo/White</material>
+  </gazebo>
+
+  <gazebo reference="lidar_link">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+  <gazebo reference="solar_panel_left">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+  <gazebo reference="solar_panel_right">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+</robot>

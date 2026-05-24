@@ -1,0 +1,12 @@
+# TRIDENT drill sample action
+float32 target_depth_m
+string sample_location_id
+---
+bool success
+string sample_id
+float32 final_depth_m
+string status_message
+---
+float32 current_depth_m
+float32 drill_torque_nm
+string phase

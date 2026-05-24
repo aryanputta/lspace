@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>lunar_scout_bringup</name>
+  <version>1.0.0</version>
+  <description>
+    LPAS bringup package — launch files, configurations, and RViz setup
+    for the Lunar PSR Autonomy Scout simulation and deployment.
+  </description>
+  <maintainer email="lpas-sw@example.com">LPAS Software Team</maintainer>
+  <license>Apache-2.0</license>
+  <depend>rclpy</depend>
+  <depend>launch</depend>
+  <depend>launch_ros</depend>
+  <depend>lunar_scout_description</depend>
+  <depend>lunar_scout_autonomy</depend>
+  <depend>lunar_scout_navigation</depend>
+  <depend>lunar_scout_hazard_detection</depend>
+  <depend>lunar_scout_power_management</depend>
+  <depend>lunar_scout_thermal_monitor</depend>
+  <depend>lunar_scout_comms</depend>
+  <depend>lunar_scout_fault_detection</depend>
+  <depend>lunar_scout_wheel_control</depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

@@ -1,0 +1,337 @@
+<?xml version="1.0" ?>
+<!--
+  Lunar Boulder SDF Model - Gazebo Fortress (Gazebo 6)
+  =====================================================
+  Represents a typical 1-3 meter diameter boulder on the lunar surface,
+  consistent with LROC NAC observations near the lunar south pole.
+
+  Physical properties based on:
+    - Heiken, G.H., Vaniman, D.T., French, B.M. (1991). Lunar Sourcebook.
+    - Carrier, W.D., Olhoeft, G.R., Mendell, W. (1991). Physical properties
+      of the lunar surface. Lunar Sourcebook Ch. 9.
+    - Mitchell, J.K. et al. (1972). Soil mechanics at Tranquility Base.
+      Science, 187(4175).
+
+  Geometry:
+    Approximates a rough convex-hull boulder shape using a primary box
+    plus chamfering boxes to remove hard corners. This gives a more realistic
+    angular-but-rounded appearance than a simple box, while keeping the
+    collision geometry computationally efficient (no mesh required).
+
+  Mass and Inertia:
+    Lunar basalt density: ~3100 kg/m³ (Apollo sample average)
+    Volume approximation: 0.65 × 1.2 × 0.9 m (effective) ≈ 0.70 m³
+    Total mass: 3100 × 0.70 ≈ 2170 kg
+    Inertia tensor computed for approximate ellipsoid with semi-axes
+    a=0.7, b=0.5, c=0.4: Ixx = (1/5)m(b²+c²), etc.
+
+  Friction:
+    μ_s = 0.7, μ_k = 0.6 (Carrier 1991, regolith on rock contact)
+    Rolling friction: 0.05 (basalt surface roughness)
+-->
+<sdf version="1.9">
+  <model name="lunar_boulder">
+
+    <!-- Boulder is quasi-static once settled; not constrained to be static
+         so it can be displaced by rover contact -->
+    <static>false</static>
+
+    <link name="boulder_link">
+
+      <!-- ================================================================
+           INERTIAL PROPERTIES
+           Basalt density: 3100 kg/m³
+           Effective volume: ~0.70 m³ for 1.2m nominal diameter boulder
+           ================================================================ -->
+      <inertial>
+        <mass>2170.0</mass>
+        <!-- Inertia of approximate ellipsoid: semi-axes 0.70, 0.55, 0.45 m -->
+        <!-- Ixx = (1/5) * m * (b^2 + c^2) = 0.2 * 2170 * (0.3025 + 0.2025) = 219.2 -->
+        <!-- Iyy = (1/5) * m * (a^2 + c^2) = 0.2 * 2170 * (0.49   + 0.2025) = 303.5 -->
+        <!-- Izz = (1/5) * m * (a^2 + b^2) = 0.2 * 2170 * (0.49   + 0.3025) = 344.5 -->
+        <inertia>
+          <ixx>219.2</ixx>
+          <ixy>0.0</ixy>
+          <ixz>0.0</ixz>
+          <iyy>303.5</iyy>
+          <iyz>0.0</iyz>
+          <izz>344.5</izz>
+        </inertia>
+        <pose>0 0 0 0 0 0</pose>
+      </inertial>
+
+      <!-- ================================================================
+           COLLISION GEOMETRY
+           Multi-box approximation of a convex hull.
+           Main body + 4 diagonal chamfer pieces give an octagonal cross-section
+           when viewed from above, and a rounded profile when viewed from the side.
+           This is a standard technique for physics engines that may struggle with
+           true mesh colliders at high contact iteration counts.
+           ================================================================ -->
+
+      <!-- Primary body: 1.2m × 0.90m × 0.70m -->
+      <collision name="col_main">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>1.20 0.90 0.70</size>
+          </box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <!-- Regolith-on-basalt friction (Carrier et al. 1991) -->
+              <mu>0.70</mu>
+              <mu2>0.65</mu2>
+              <fdir1>0 0 0</fdir1>
+              <slip1>0.0</slip1>
+              <slip2>0.0</slip2>
+            </ode>
+            <bullet>
+              <friction>0.70</friction>
+              <friction2>0.65</friction2>
+              <rolling_friction>0.05</rolling_friction>
+            </bullet>
+            <torsional>
+              <coefficient>0.001</coefficient>
+              <use_patch_radius>true</use_patch_radius>
+              <patch_radius>0.1</patch_radius>
+              <surface_radius>0.6</surface_radius>
+              <ode>
+                <slip>1e-4</slip>
+              </ode>
+            </torsional>
+          </friction>
+          <bounce>
+            <!-- Basalt is not very elastic; low restitution -->
+            <restitution_coefficient>0.03</restitution_coefficient>
+            <threshold>100000</threshold>
+          </bounce>
+          <contact>
+            <ode>
+              <!-- Stiff contact for rock -->
+              <soft_cfm>1e-6</soft_cfm>
+              <soft_erp>0.2</soft_erp>
+              <kp>5e7</kp>
+              <kd>500</kd>
+              <max_vel>0.5</max_vel>
+              <min_depth>0.0005</min_depth>
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+
+      <!-- Chamfer: front-right edge (45° diagonal, reduce corner sharpness) -->
+      <collision name="col_chamfer_fr">
+        <pose>0.45 0.30 0 0 0 0.785398</pose>
+        <geometry>
+          <box>
+            <size>0.42 0.42 0.70</size>
+          </box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode><mu>0.70</mu><mu2>0.65</mu2></ode>
+          </friction>
+        </surface>
+      </collision>
+
+      <!-- Chamfer: front-left edge -->
+      <collision name="col_chamfer_fl">
+        <pose>0.45 -0.30 0 0 0 0.785398</pose>
+        <geometry>
+          <box>
+            <size>0.42 0.42 0.70</size>
+          </box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode><mu>0.70</mu><mu2>0.65</mu2></ode>
+          </friction>
+        </surface>
+      </collision>
+
+      <!-- Chamfer: rear-right edge -->
+      <collision name="col_chamfer_rr">
+        <pose>-0.45 0.30 0 0 0 0.785398</pose>
+        <geometry>
+          <box>
+            <size>0.42 0.42 0.70</size>
+          </box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode><mu>0.70</mu><mu2>0.65</mu2></ode>
+          </friction>
+        </surface>
+      </collision>
+
+      <!-- Chamfer: rear-left edge -->
+      <collision name="col_chamfer_rl">
+        <pose>-0.45 -0.30 0 0 0 0.785398</pose>
+        <geometry>
+          <box>
+            <size>0.42 0.42 0.70</size>
+          </box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode><mu>0.70</mu><mu2>0.65</mu2></ode>
+          </friction>
+        </surface>
+      </collision>
+
+      <!-- Top/bottom rounding: two thinner boxes in Z -->
+      <collision name="col_top_round">
+        <pose>0 0 0.28 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>1.0 0.72 0.14</size>
+          </box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode><mu>0.70</mu><mu2>0.65</mu2></ode>
+          </friction>
+        </surface>
+      </collision>
+
+      <collision name="col_bot_round">
+        <pose>0 0 -0.28 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>1.0 0.72 0.14</size>
+          </box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode><mu>0.70</mu><mu2>0.65</mu2></ode>
+          </friction>
+        </surface>
+      </collision>
+
+      <!-- ================================================================
+           VISUAL GEOMETRY
+           Uses the same multi-box structure as collision.
+           Material: lunar regolith-coated basalt
+             - Very low albedo (0.07-0.12 typical for lunar rocks)
+             - Slight specular for anorthosite/basalt facets
+             - Brownish-grey tone (iron-rich highland regolith)
+
+           NOTE: In a full production setup, replace this with a mesh URI:
+             <uri>model://lunar_boulder/meshes/boulder_001.dae</uri>
+           with a photogrammetry-derived mesh and albedo texture map.
+           ================================================================ -->
+
+      <visual name="vis_main">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>1.20 0.90 0.70</size>
+          </box>
+        </geometry>
+        <material>
+          <!-- Regolith-coated basalt: dark, slightly warm grey -->
+          <ambient>0.07 0.065 0.060 1</ambient>
+          <diffuse>0.11 0.100 0.090 1</diffuse>
+          <specular>0.015 0.012 0.010 1</specular>
+          <emissive>0.0 0.0 0.0 1</emissive>
+        </material>
+        <laser_retro>0.1</laser_retro>  <!-- LiDAR reflectance: low for dark basalt -->
+      </visual>
+
+      <visual name="vis_chamfer_fr">
+        <pose>0.45 0.30 0 0 0 0.785398</pose>
+        <geometry>
+          <box>
+            <size>0.42 0.42 0.70</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.072 0.067 0.062 1</ambient>
+          <diffuse>0.112 0.102 0.092 1</diffuse>
+          <specular>0.016 0.013 0.011 1</specular>
+        </material>
+      </visual>
+
+      <visual name="vis_chamfer_fl">
+        <pose>0.45 -0.30 0 0 0 0.785398</pose>
+        <geometry>
+          <box>
+            <size>0.42 0.42 0.70</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.068 0.063 0.058 1</ambient>
+          <diffuse>0.108 0.098 0.088 1</diffuse>
+          <specular>0.014 0.011 0.009 1</specular>
+        </material>
+      </visual>
+
+      <visual name="vis_chamfer_rr">
+        <pose>-0.45 0.30 0 0 0 0.785398</pose>
+        <geometry>
+          <box>
+            <size>0.42 0.42 0.70</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.073 0.068 0.063 1</ambient>
+          <diffuse>0.113 0.103 0.093 1</diffuse>
+          <specular>0.015 0.012 0.010 1</specular>
+        </material>
+      </visual>
+
+      <visual name="vis_chamfer_rl">
+        <pose>-0.45 -0.30 0 0 0 0.785398</pose>
+        <geometry>
+          <box>
+            <size>0.42 0.42 0.70</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.070 0.065 0.060 1</ambient>
+          <diffuse>0.110 0.100 0.090 1</diffuse>
+          <specular>0.014 0.011 0.009 1</specular>
+        </material>
+      </visual>
+
+      <visual name="vis_top">
+        <pose>0 0 0.28 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>1.0 0.72 0.14</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.075 0.070 0.065 1</ambient>
+          <diffuse>0.115 0.105 0.095 1</diffuse>
+          <specular>0.018 0.015 0.013 1</specular>
+        </material>
+      </visual>
+
+      <visual name="vis_bottom">
+        <pose>0 0 -0.28 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>1.0 0.72 0.14</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.065 0.060 0.055 1</ambient>
+          <diffuse>0.105 0.095 0.085 1</diffuse>
+          <specular>0.013 0.010 0.008 1</specular>
+        </material>
+      </visual>
+
+      <!-- Self-collide disabled for performance: boulder-boulder interactions
+           are rare and expensive -->
+      <self_collide>false</self_collide>
+
+      <!-- Enable wind: false (vacuum) -->
+      <enable_wind>false</enable_wind>
+
+    </link>
+
+  </model>
+</sdf>

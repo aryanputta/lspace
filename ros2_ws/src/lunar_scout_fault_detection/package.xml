@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>lunar_scout_fault_detection</name>
+  <version>1.0.0</version>
+  <description>
+    LPAS Fault Detection, Isolation, and Recovery (FDIR) node.
+    Monitors all subsystems, classifies faults, triggers autonomous recovery.
+  </description>
+  <maintainer email="lpas-sw@example.com">LPAS Software Team</maintainer>
+  <license>Apache-2.0</license>
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <depend>diagnostic_msgs</depend>
+  <depend>rcl_interfaces</depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

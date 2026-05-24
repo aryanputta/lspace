@@ -1,0 +1,15 @@
+# NIRVSS spectrometer action
+float32 integration_time_s
+float32 wavelength_min_nm
+float32 wavelength_max_nm
+string sample_id
+---
+bool success
+float32[] spectrum_data
+float32[] wavelength_axis_nm
+float32 detector_temp_c
+string calibration_status
+---
+float32 progress_pct
+float32 detector_temp_c
+string phase

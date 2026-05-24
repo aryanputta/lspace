@@ -1,0 +1,109 @@
+{
+  "title": "LPAS NASA Heritage Model Manifest",
+  "document": "LPAS-CAD-HERITAGE-001",
+  "source_repo": "https://github.com/nasa/NASA-3D-Resources",
+  "license": "NASA Open Source Agreement / Public Domain",
+  "models": [
+    {
+      "name": "Curiosity Rover Body",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Printing/Curiosity%20Rover/Curiosity%20Rover%203D%20Printed%20Model/Detailed%20Curiosity%20Model%20(Large)/STL%20Files/body.STL",
+      "local_path": "/home/user/lspace/cad/nx_models/nasa_heritage_models/nasa_curiosity_body.stl",
+      "component_map": "chassis_body",
+      "lpas_use": "Heritage reference for LPAS chassis structural layout",
+      "success": false,
+      "staged_as_urdf_mesh": false
+    },
+    {
+      "name": "Curiosity ChemCam",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Printing/Curiosity%20Rover/Curiosity%20Rover%203D%20Printed%20Model/Detailed%20Curiosity%20Model%20(Large)/STL%20Files/chemcam.STL",
+      "local_path": "/home/user/lspace/cad/nx_models/nasa_heritage_models/nasa_curiosity_chemcam.stl",
+      "component_map": "nav_cam_assembly",
+      "lpas_use": "Heritage reference for LPAS instrument mast + nav camera assembly",
+      "success": false,
+      "staged_as_urdf_mesh": false
+    },
+    {
+      "name": "Mars Exploration Rover (Spirit/Opportunity)",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Models/Mars%20Exploration%20Rover%20-%20Spirit%20and%20Opportunity/Mars%20Exploration%20Rover%20-%20Spirit%20and%20Opportunity.blend",
+      "local_path": "/home/user/lspace/cad/nx_models/nasa_heritage_models/nasa_mer_spirit_opportunity.blend",
+      "component_map": "rocker_arm_left",
+      "lpas_use": "Heritage: MER rocker-bogie geometry for LPAS suspension dimensioning",
+      "success": true,
+      "staged_as_urdf_mesh": false
+    },
+    {
+      "name": "Curiosity RTG (enclosure geometry only)",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Printing/Curiosity%20Rover/Curiosity%20Rover%203D%20Printed%20Model/Detailed%20Curiosity%20Model%20(Large)/STL%20Files/rtg.STL",
+      "local_path": "/home/user/lspace/cad/nx_models/nasa_heritage_models/nasa_curiosity_rtg_enclosure.stl",
+      "component_map": "electronics_bay",
+      "lpas_use": "Electronics bay enclosure geometry heritage (not RTG \u2014 thermal reference only)",
+      "success": false,
+      "staged_as_urdf_mesh": false
+    },
+    {
+      "name": "Curiosity Wheels",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Printing/Curiosity%20Rover/Curiosity%20Rover%203D%20Printed%20Model/Detailed%20Curiosity%20Model%20(Large)/STL%20Files/wheelLeft.STL",
+      "local_path": "/home/user/lspace/cad/nx_models/nasa_heritage_models/nasa_curiosity_wheel_left.stl",
+      "component_map": "wheel_assembly",
+      "lpas_use": "Heritage: Al-machined wheel geometry \u2192 LPAS uses Ti mesh variant",
+      "success": false,
+      "staged_as_urdf_mesh": false
+    },
+    {
+      "name": "Curiosity HGA",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Printing/Curiosity%20Rover/Curiosity%20Rover%203D%20Printed%20Model/Detailed%20Curiosity%20Model%20(Large)/STL%20Files/hga.STL",
+      "local_path": "/home/user/lspace/cad/nx_models/nasa_heritage_models/nasa_curiosity_hga.stl",
+      "component_map": "hga_dish",
+      "lpas_use": "Heritage: HGA gimbal geometry for LPAS Ka-band HGA design",
+      "success": false,
+      "staged_as_urdf_mesh": false
+    },
+    {
+      "name": "Curiosity Mast",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Printing/Curiosity%20Rover/Curiosity%20Rover%203D%20Printed%20Model/Detailed%20Curiosity%20Model%20(Large)/STL%20Files/mast.STL",
+      "local_path": "/home/user/lspace/cad/nx_models/nasa_heritage_models/nasa_curiosity_mast.stl",
+      "component_map": "nav_cam_assembly",
+      "lpas_use": "Heritage: sensor mast geometry for LPAS nav camera mast",
+      "success": false,
+      "staged_as_urdf_mesh": false
+    },
+    {
+      "name": "Curiosity Rocker",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Printing/Curiosity%20Rover/Curiosity%20Rover%203D%20Printed%20Model/Detailed%20Curiosity%20Model%20(Large)/STL%20Files/rocker.STL",
+      "local_path": "/home/user/lspace/cad/nx_models/nasa_heritage_models/nasa_curiosity_rocker.stl",
+      "component_map": "rocker_arm_left",
+      "lpas_use": "DIRECT heritage: rocker arm geometry dimensioning for LPAS suspension",
+      "success": false,
+      "staged_as_urdf_mesh": false
+    },
+    {
+      "name": "Curiosity Bogie",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Printing/Curiosity%20Rover/Curiosity%20Rover%203D%20Printed%20Model/Detailed%20Curiosity%20Model%20(Large)/STL%20Files/bogie.STL",
+      "local_path": "/home/user/lspace/cad/nx_models/nasa_heritage_models/nasa_curiosity_bogie.stl",
+      "component_map": "bogie_arm_left",
+      "lpas_use": "DIRECT heritage: bogie arm geometry for LPAS front/rear bogie",
+      "success": false,
+      "staged_as_urdf_mesh": false
+    },
+    {
+      "name": "Curiosity Solar Panel",
+      "url": "https://raw.githubusercontent.com/nasa/NASA-3D-Resources/master/3D%20Printing/Curiosity%20Rover/Curiosity%20Rover%203D%20Printed%20Model/Detailed%20Curiosity%20Model%20(Large)/STL%20Files/solar.STL",
+      "local_path": "/home/user/lspace/cad/nx_models/nasa_heritage_models/nasa_curiosity_solar.stl",
+      "component_map": "solar_array_panel",
+      "lpas_use": "Solar array structural geometry heritage for LPAS deployable panels",
+      "success": false,
+      "staged_as_urdf_mesh": false
+    }
+  ],
+  "supplemental": [
+    {
+      "name": "Mars 2020 Perseverance Rover (NASA official)",
+      "url": "https://mars.nasa.gov/system/resources/detail_files/25042_PIA23764.zip",
+      "format": "FBX/OBJ",
+      "license": "NASA Open Use",
+      "lpas_heritage": "Perseverance rocker-bogie geometry, mast design, camera placement",
+      "note": "Download manually from: https://science.nasa.gov/resource/mars-perseverance-rover-3d-model/"
+    }
+  ],
+  "traceability_note": "These models provide dimensional heritage and geometry reference for LPAS. LPAS design adapts these geometries for lunar south pole conditions. No RTG components are included per LPAS power system constraint."
+}

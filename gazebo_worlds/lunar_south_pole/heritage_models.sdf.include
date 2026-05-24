@@ -1,0 +1,14 @@
+<!-- LPAS heritage models for Gazebo reference display -->
+
+  <model name="heritage_rocker_arm_left">
+    <static>true</static>
+    <link name="link">
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/rocker_arm_left.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>

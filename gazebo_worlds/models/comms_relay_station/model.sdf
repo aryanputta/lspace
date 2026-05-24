@@ -1,0 +1,610 @@
+<?xml version="1.0" ?>
+<!--
+  Communication Relay Station SDF Model - Gazebo Fortress (Gazebo 6)
+  ===================================================================
+  Models a fixed-base lunar surface communication relay station.
+  Designed to relay UHF/S-band/X-band signals between rover and Earth/orbiter.
+
+  Components:
+    1. Base structure    - Hexagonal truss base, anchored to regolith
+    2. Vertical mast     - 4m aluminum alloy mast
+    3. HGA dish          - 1.2m diameter parabolic high-gain antenna (X-band)
+    4. LGA array         - Omni-directional low-gain antennas (UHF relay)
+    5. Solar panels      - 2x deployable panels (deployed, fixed in sim)
+    6. Status LEDs       - Operational status indicator lights
+    7. Electronics box   - Equipment housing
+
+  Physical parameters:
+    Total mass: ~85 kg (estimate for lunar deployment)
+    Base footprint: 1.5m × 1.5m
+    Total height: 5.2m (mast + dish)
+
+  All components are STATIC (no joints, no articulation) since the station
+  is deployed and fixed. In a higher-fidelity model, the HGA dish could
+  be actuated to track the Earth direction.
+
+  Coordinate frame: origin at base center, Z-up
+-->
+<sdf version="1.9">
+  <model name="comms_relay_station">
+
+    <static>true</static>
+
+    <!-- ================================================================
+         LINK 1: BASE STRUCTURE
+         Hexagonal truss base plate, 1.5m across, 0.15m thick
+         Anchors the station against toppling on uneven regolith.
+         ================================================================ -->
+    <link name="base_link">
+      <pose>0 0 0.075 0 0 0</pose>
+
+      <inertial>
+        <mass>25.0</mass>
+        <inertia>
+          <ixx>4.6875</ixx>   <!-- (1/12)*m*(h^2+d^2): box approx -->
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>4.6875</iyy>
+          <iyz>0</iyz>
+          <izz>9.375</izz>
+        </inertia>
+      </inertial>
+
+      <collision name="base_collision">
+        <geometry>
+          <box>
+            <size>1.5 1.5 0.15</size>
+          </box>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <!-- Very high friction: anchored to regolith surface -->
+              <mu>2.0</mu>
+              <mu2>2.0</mu2>
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <kp>1e8</kp>
+              <kd>1000</kd>
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+
+      <visual name="base_visual">
+        <geometry>
+          <box>
+            <size>1.5 1.5 0.15</size>
+          </box>
+        </geometry>
+        <material>
+          <!-- Structural aluminum: silver-grey with some oxidation -->
+          <ambient>0.45 0.45 0.45 1</ambient>
+          <diffuse>0.65 0.65 0.65 1</diffuse>
+          <specular>0.30 0.30 0.30 1</specular>
+        </material>
+      </visual>
+
+      <!-- Base anchor legs (4 diagonal legs at corners) -->
+      <visual name="leg_NE">
+        <pose>0.55 0.55 -0.15 0 0.7854 0.7854</pose>
+        <geometry><cylinder><radius>0.025</radius><length>0.4</length></cylinder></geometry>
+        <material>
+          <ambient>0.40 0.40 0.40 1</ambient>
+          <diffuse>0.60 0.60 0.60 1</diffuse>
+          <specular>0.25 0.25 0.25 1</specular>
+        </material>
+      </visual>
+
+      <visual name="leg_NW">
+        <pose>-0.55 0.55 -0.15 0 -0.7854 0.7854</pose>
+        <geometry><cylinder><radius>0.025</radius><length>0.4</length></cylinder></geometry>
+        <material>
+          <ambient>0.40 0.40 0.40 1</ambient>
+          <diffuse>0.60 0.60 0.60 1</diffuse>
+          <specular>0.25 0.25 0.25 1</specular>
+        </material>
+      </visual>
+
+      <visual name="leg_SE">
+        <pose>0.55 -0.55 -0.15 0 0.7854 -0.7854</pose>
+        <geometry><cylinder><radius>0.025</radius><length>0.4</length></cylinder></geometry>
+        <material>
+          <ambient>0.40 0.40 0.40 1</ambient>
+          <diffuse>0.60 0.60 0.60 1</diffuse>
+          <specular>0.25 0.25 0.25 1</specular>
+        </material>
+      </visual>
+
+      <visual name="leg_SW">
+        <pose>-0.55 -0.55 -0.15 0 -0.7854 -0.7854</pose>
+        <geometry><cylinder><radius>0.025</radius><length>0.4</length></cylinder></geometry>
+        <material>
+          <ambient>0.40 0.40 0.40 1</ambient>
+          <diffuse>0.60 0.60 0.60 1</diffuse>
+          <specular>0.25 0.25 0.25 1</specular>
+        </material>
+      </visual>
+    </link>
+
+    <!-- ================================================================
+         LINK 2: VERTICAL MAST
+         4.0m aluminum mast, 80mm diameter, wall thickness 5mm
+         Mass: ~3.5 kg (aluminum alloy 6061-T6, 2700 kg/m³)
+         ================================================================ -->
+    <link name="mast_link">
+      <pose>0 0 2.225 0 0 0</pose>  <!-- base_h/2 + 0.15 + mast_h/2 = 0.075+0.15+2.0 -->
+
+      <inertial>
+        <mass>3.5</mass>
+        <inertia>
+          <ixx>4.667</ixx>   <!-- (1/12)*m*L^2 for slender rod: (1/12)*3.5*16 -->
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>4.667</iyy>
+          <iyz>0</iyz>
+          <izz>0.0028</izz>  <!-- (1/2)*m*r^2 = 0.5*3.5*0.0016 -->
+        </inertia>
+      </inertial>
+
+      <collision name="mast_collision">
+        <geometry>
+          <cylinder>
+            <radius>0.040</radius>
+            <length>4.0</length>
+          </cylinder>
+        </geometry>
+      </collision>
+
+      <visual name="mast_visual">
+        <geometry>
+          <cylinder>
+            <radius>0.040</radius>
+            <length>4.0</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.50 0.50 0.50 1</ambient>
+          <diffuse>0.75 0.75 0.75 1</diffuse>
+          <specular>0.40 0.40 0.40 1</specular>
+        </material>
+      </visual>
+
+      <!-- Cable braces (visual only, 4 diagonal braces from mast to base) -->
+      <visual name="brace_N">
+        <pose>0.0 0.55 -0.8 -0.5236 0 0</pose>
+        <geometry><cylinder><radius>0.006</radius><length>1.25</length></cylinder></geometry>
+        <material>
+          <ambient>0.6 0.6 0.6 1</ambient>
+          <diffuse>0.8 0.8 0.8 1</diffuse>
+          <specular>0.2 0.2 0.2 1</specular>
+        </material>
+      </visual>
+
+      <visual name="brace_S">
+        <pose>0.0 -0.55 -0.8 0.5236 0 0</pose>
+        <geometry><cylinder><radius>0.006</radius><length>1.25</length></cylinder></geometry>
+        <material>
+          <ambient>0.6 0.6 0.6 1</ambient>
+          <diffuse>0.8 0.8 0.8 1</diffuse>
+          <specular>0.2 0.2 0.2 1</specular>
+        </material>
+      </visual>
+
+      <visual name="brace_E">
+        <pose>0.55 0.0 -0.8 0 0.5236 0</pose>
+        <geometry><cylinder><radius>0.006</radius><length>1.25</length></cylinder></geometry>
+        <material>
+          <ambient>0.6 0.6 0.6 1</ambient>
+          <diffuse>0.8 0.8 0.8 1</diffuse>
+          <specular>0.2 0.2 0.2 1</specular>
+        </material>
+      </visual>
+
+      <visual name="brace_W">
+        <pose>-0.55 0.0 -0.8 0 -0.5236 0</pose>
+        <geometry><cylinder><radius>0.006</radius><length>1.25</length></cylinder></geometry>
+        <material>
+          <ambient>0.6 0.6 0.6 1</ambient>
+          <diffuse>0.8 0.8 0.8 1</diffuse>
+          <specular>0.2 0.2 0.2 1</specular>
+        </material>
+      </visual>
+    </link>
+
+    <!-- ================================================================
+         LINK 3: HGA DISH - High Gain Antenna (X-band, 8.4 GHz)
+         1.2m parabolic reflector, pointing toward Earth (South / horizon)
+         Dish aimed at Earth: az≈180°, el≈89° (Earth nearly overhead at pole)
+         Actually Earth is at ~1-6° elevation as seen from lunar south pole.
+         ================================================================ -->
+    <link name="hga_dish_link">
+      <!-- Positioned at top of mast, tilted toward Earth direction -->
+      <!-- Earth elevation ~2-5° above horizon, azimuth ~180° (south) -->
+      <!-- Dish normal points toward Earth: pitch = -(90° - 3°) = -87° from zenith -->
+      <pose>0 0 4.3 -1.518 0 3.14159</pose>  <!-- ≈ 87° tilt south -->
+
+      <inertial>
+        <mass>4.5</mass>
+        <inertia>
+          <ixx>0.810</ixx>   <!-- disk: (1/4)*m*r^2 + (1/12)*m*h^2 -->
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.810</iyy>
+          <iyz>0</iyz>
+          <izz>1.620</izz>   <!-- (1/2)*m*r^2 = 0.5*4.5*0.72 -->
+        </inertia>
+      </inertial>
+
+      <collision name="dish_collision">
+        <geometry>
+          <cylinder>
+            <!-- Shallow cylinder approximates the dish reflector -->
+            <radius>0.60</radius>
+            <length>0.08</length>
+          </cylinder>
+        </geometry>
+      </collision>
+
+      <!-- Dish reflector surface -->
+      <visual name="dish_reflector">
+        <geometry>
+          <cylinder>
+            <radius>0.60</radius>
+            <length>0.04</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <!-- Gold-colored CFRP reflector with metallic sheen -->
+          <ambient>0.55 0.48 0.10 1</ambient>
+          <diffuse>0.70 0.60 0.15 1</diffuse>
+          <specular>0.80 0.75 0.30 1</specular>
+        </material>
+      </visual>
+
+      <!-- Dish rim ring -->
+      <visual name="dish_rim">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.62</radius>
+            <length>0.025</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.35 0.35 0.35 1</ambient>
+          <diffuse>0.50 0.50 0.50 1</diffuse>
+          <specular>0.40 0.40 0.40 1</specular>
+        </material>
+      </visual>
+
+      <!-- Feed horn at focal point (0.25m from dish center) -->
+      <visual name="feed_horn">
+        <pose>0 0 0.25 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.04</radius>
+            <length>0.12</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.30 0.30 0.30 1</ambient>
+          <diffuse>0.45 0.45 0.45 1</diffuse>
+          <specular>0.35 0.35 0.35 1</specular>
+        </material>
+      </visual>
+
+      <!-- Feed support struts (4x) -->
+      <visual name="strut_1">
+        <pose>0.25 0 0.12 0 0.7 0</pose>
+        <geometry><cylinder><radius>0.008</radius><length>0.32</length></cylinder></geometry>
+        <material>
+          <ambient>0.45 0.45 0.45 1</ambient>
+          <diffuse>0.65 0.65 0.65 1</diffuse>
+          <specular>0.30 0.30 0.30 1</specular>
+        </material>
+      </visual>
+
+      <visual name="strut_2">
+        <pose>-0.25 0 0.12 0 -0.7 0</pose>
+        <geometry><cylinder><radius>0.008</radius><length>0.32</length></cylinder></geometry>
+        <material>
+          <ambient>0.45 0.45 0.45 1</ambient>
+          <diffuse>0.65 0.65 0.65 1</diffuse>
+          <specular>0.30 0.30 0.30 1</specular>
+        </material>
+      </visual>
+    </link>
+
+    <!-- ================================================================
+         LINK 4: SOLAR PANELS (deployed, fixed)
+         2x panels, 1.2m × 0.8m each (GaAs triple-junction cells)
+         Deployed facing north (toward max PSR-adjacent sunlight)
+         Pitched 2° to match sun elevation at south pole
+         ================================================================ -->
+    <link name="solar_panel_east">
+      <!-- Horizontal arm extends 1.0m east from mast, panels face up/north -->
+      <pose>1.3 0 1.5 0 -0.0349 0</pose>  <!-- 2° tilt toward sun -->
+
+      <inertial>
+        <mass>8.0</mass>
+        <inertia>
+          <ixx>0.427</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1.413</iyy>
+          <iyz>0</iyz>
+          <izz>1.840</izz>
+        </inertia>
+      </inertial>
+
+      <collision name="panel_collision">
+        <geometry>
+          <box><size>1.2 0.80 0.025</size></box>
+        </geometry>
+      </collision>
+
+      <!-- Solar cell face (pointing upward / toward sun) -->
+      <visual name="cells_top">
+        <pose>0 0 0.01 0 0 0</pose>
+        <geometry><box><size>1.15 0.75 0.005</size></box></geometry>
+        <material>
+          <!-- Deep navy/dark blue: GaAs solar cell appearance -->
+          <ambient>0.05 0.05 0.20 1</ambient>
+          <diffuse>0.08 0.08 0.30 1</diffuse>
+          <specular>0.20 0.20 0.40 1</specular>
+        </material>
+      </visual>
+
+      <!-- Panel substrate (back face, white) -->
+      <visual name="substrate_back">
+        <pose>0 0 -0.01 0 0 0</pose>
+        <geometry><box><size>1.2 0.80 0.015</size></box></geometry>
+        <material>
+          <ambient>0.85 0.85 0.85 1</ambient>
+          <diffuse>0.95 0.95 0.95 1</diffuse>
+          <specular>0.10 0.10 0.10 1</specular>
+        </material>
+      </visual>
+
+      <!-- Panel frame (aluminum edge) -->
+      <visual name="panel_frame">
+        <geometry><box><size>1.2 0.80 0.025</size></box></geometry>
+        <material>
+          <ambient>0.40 0.40 0.40 1</ambient>
+          <diffuse>0.60 0.60 0.60 1</diffuse>
+          <specular>0.35 0.35 0.35 1</specular>
+        </material>
+      </visual>
+
+      <!-- Arm connecting to mast -->
+      <visual name="arm_east">
+        <pose>-0.85 0 0 0 1.5708 0</pose>
+        <geometry><cylinder><radius>0.02</radius><length>0.85</length></cylinder></geometry>
+        <material>
+          <ambient>0.45 0.45 0.45 1</ambient>
+          <diffuse>0.65 0.65 0.65 1</diffuse>
+          <specular>0.30 0.30 0.30 1</specular>
+        </material>
+      </visual>
+    </link>
+
+    <link name="solar_panel_west">
+      <pose>-1.3 0 1.5 0 -0.0349 0</pose>
+
+      <inertial>
+        <mass>8.0</mass>
+        <inertia>
+          <ixx>0.427</ixx><ixy>0</ixy><ixz>0</ixz>
+          <iyy>1.413</iyy><iyz>0</iyz>
+          <izz>1.840</izz>
+        </inertia>
+      </inertial>
+
+      <collision name="panel_collision">
+        <geometry><box><size>1.2 0.80 0.025</size></box></geometry>
+      </collision>
+
+      <visual name="cells_top">
+        <pose>0 0 0.01 0 0 0</pose>
+        <geometry><box><size>1.15 0.75 0.005</size></box></geometry>
+        <material>
+          <ambient>0.05 0.05 0.20 1</ambient>
+          <diffuse>0.08 0.08 0.30 1</diffuse>
+          <specular>0.20 0.20 0.40 1</specular>
+        </material>
+      </visual>
+
+      <visual name="substrate_back">
+        <pose>0 0 -0.01 0 0 0</pose>
+        <geometry><box><size>1.2 0.80 0.015</size></box></geometry>
+        <material>
+          <ambient>0.85 0.85 0.85 1</ambient>
+          <diffuse>0.95 0.95 0.95 1</diffuse>
+          <specular>0.10 0.10 0.10 1</specular>
+        </material>
+      </visual>
+
+      <visual name="panel_frame">
+        <geometry><box><size>1.2 0.80 0.025</size></box></geometry>
+        <material>
+          <ambient>0.40 0.40 0.40 1</ambient>
+          <diffuse>0.60 0.60 0.60 1</diffuse>
+          <specular>0.35 0.35 0.35 1</specular>
+        </material>
+      </visual>
+
+      <visual name="arm_west">
+        <pose>0.85 0 0 0 1.5708 0</pose>
+        <geometry><cylinder><radius>0.02</radius><length>0.85</length></cylinder></geometry>
+        <material>
+          <ambient>0.45 0.45 0.45 1</ambient>
+          <diffuse>0.65 0.65 0.65 1</diffuse>
+          <specular>0.30 0.30 0.30 1</specular>
+        </material>
+      </visual>
+    </link>
+
+    <!-- ================================================================
+         LINK 5: ELECTRONICS BOX
+         Equipment housing at base of mast: electronics, power conditioning,
+         battery pack, thermal control system
+         0.4m × 0.3m × 0.25m
+         ================================================================ -->
+    <link name="electronics_box">
+      <pose>0 0.55 0.275 0 0 0</pose>
+
+      <inertial>
+        <mass>15.0</mass>
+        <inertia>
+          <ixx>0.179</ixx><ixy>0</ixy><ixz>0</ixz>
+          <iyy>0.261</iyy><iyz>0</iyz>
+          <izz>0.188</izz>
+        </inertia>
+      </inertial>
+
+      <collision name="box_collision">
+        <geometry><box><size>0.40 0.30 0.25</size></box></geometry>
+      </collision>
+
+      <!-- Box body: MLI-covered (gold) -->
+      <visual name="box_body">
+        <geometry><box><size>0.40 0.30 0.25</size></box></geometry>
+        <material>
+          <ambient>0.40 0.35 0.05 1</ambient>
+          <diffuse>0.55 0.48 0.08 1</diffuse>
+          <specular>0.60 0.55 0.15 1</specular>
+        </material>
+      </visual>
+
+      <!-- Radiator panel on one face (black) -->
+      <visual name="radiator">
+        <pose>0 -0.155 0 0 0 0</pose>
+        <geometry><box><size>0.38 0.005 0.23</size></box></geometry>
+        <material>
+          <ambient>0.02 0.02 0.02 1</ambient>
+          <diffuse>0.03 0.03 0.03 1</diffuse>
+          <specular>0.01 0.01 0.01 1</specular>
+        </material>
+      </visual>
+    </link>
+
+    <!-- ================================================================
+         LINK 6: STATUS LED ARRAY
+         3 LEDs: green (operational), amber (charging), blue (comms active)
+         These are purely visual indicators - small emissive spheres
+         ================================================================ -->
+    <link name="status_leds">
+      <pose>0.05 -0.40 0.35 0 0 0</pose>
+
+      <inertial>
+        <mass>0.05</mass>
+        <inertia>
+          <ixx>1e-5</ixx><ixy>0</ixy><ixz>0</ixz>
+          <iyy>1e-5</iyy><iyz>0</iyz>
+          <izz>1e-5</izz>
+        </inertia>
+      </inertial>
+
+      <!-- Green LED: system nominal -->
+      <visual name="led_green">
+        <pose>0 0 0.06 0 0 0</pose>
+        <geometry><sphere><radius>0.015</radius></sphere></geometry>
+        <material>
+          <ambient>0.0 0.5 0.0 1</ambient>
+          <diffuse>0.0 0.8 0.0 1</diffuse>
+          <specular>0.0 0.2 0.0 1</specular>
+          <!-- Emissive: LED glows in darkness -->
+          <emissive>0.0 0.6 0.0 1</emissive>
+        </material>
+      </visual>
+
+      <!-- Amber LED: charging/power status -->
+      <visual name="led_amber">
+        <pose>0 0 0.03 0 0 0</pose>
+        <geometry><sphere><radius>0.015</radius></sphere></geometry>
+        <material>
+          <ambient>0.6 0.4 0.0 1</ambient>
+          <diffuse>0.9 0.6 0.0 1</diffuse>
+          <specular>0.2 0.1 0.0 1</specular>
+          <emissive>0.7 0.45 0.0 1</emissive>
+        </material>
+      </visual>
+
+      <!-- Blue LED: active communication link -->
+      <visual name="led_blue">
+        <pose>0 0 0.0 0 0 0</pose>
+        <geometry><sphere><radius>0.015</radius></sphere></geometry>
+        <material>
+          <ambient>0.0 0.0 0.6 1</ambient>
+          <diffuse>0.0 0.0 0.9 1</diffuse>
+          <specular>0.0 0.0 0.2 1</specular>
+          <emissive>0.0 0.1 0.9 1</emissive>
+        </material>
+      </visual>
+
+      <!-- LED housing panel -->
+      <visual name="led_panel">
+        <pose>0 -0.005 0.03 0 0 0</pose>
+        <geometry><box><size>0.06 0.01 0.12</size></box></geometry>
+        <material>
+          <ambient>0.15 0.15 0.15 1</ambient>
+          <diffuse>0.20 0.20 0.20 1</diffuse>
+          <specular>0.05 0.05 0.05 1</specular>
+        </material>
+      </visual>
+    </link>
+
+    <!-- ================================================================
+         LINK 7: OMNI LGA (Low Gain Antenna) - UHF relay omnidirectional
+         Small blade antenna at top of mast for rover proximity comms
+         ================================================================ -->
+    <link name="lga_antenna">
+      <pose>0.15 0 4.5 0 0 0</pose>
+
+      <inertial>
+        <mass>0.3</mass>
+        <inertia>
+          <ixx>0.00225</ixx><ixy>0</ixy><ixz>0</ixz>
+          <iyy>0.00225</iyy><iyz>0</iyz>
+          <izz>0.000038</izz>
+        </inertia>
+      </inertial>
+
+      <!-- UHF blade antenna -->
+      <visual name="blade">
+        <geometry><box><size>0.025 0.008 0.30</size></box></geometry>
+        <material>
+          <ambient>0.20 0.20 0.20 1</ambient>
+          <diffuse>0.30 0.30 0.30 1</diffuse>
+          <specular>0.15 0.15 0.15 1</specular>
+        </material>
+      </visual>
+
+      <!-- Second blade perpendicular -->
+      <visual name="blade_2">
+        <pose>0 0 0 0 0 1.5708</pose>
+        <geometry><box><size>0.025 0.008 0.30</size></box></geometry>
+        <material>
+          <ambient>0.20 0.20 0.20 1</ambient>
+          <diffuse>0.30 0.30 0.30 1</diffuse>
+          <specular>0.15 0.15 0.15 1</specular>
+        </material>
+      </visual>
+
+      <!-- Antenna base fitting -->
+      <visual name="base_fitting">
+        <pose>0 0 -0.06 0 0 0</pose>
+        <geometry><cylinder><radius>0.025</radius><length>0.06</length></cylinder></geometry>
+        <material>
+          <ambient>0.35 0.35 0.35 1</ambient>
+          <diffuse>0.50 0.50 0.50 1</diffuse>
+          <specular>0.25 0.25 0.25 1</specular>
+        </material>
+      </visual>
+    </link>
+
+  </model>
+</sdf>
