@@ -171,7 +171,7 @@ local_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.85       # 85cm inflation = wheel width + margin
+        inflation_radius: 0.95       # 95cm inflation — must exceed inscribed radius (0.892)
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: true
