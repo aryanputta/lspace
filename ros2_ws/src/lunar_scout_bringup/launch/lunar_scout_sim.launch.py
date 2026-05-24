@@ -74,18 +74,29 @@ def generate_launch_description() -> LaunchDescription:
     )
 
     # ── Gazebo ────────────────────────────────────────────────────────────────
+    _resource_path = ":".join([
+        str(GAZEBO_WORLDS.parent),           # gazebo_worlds/ (world SDF dir)
+        str(GAZEBO_WORLDS.parent / "models"), # gazebo_worlds/models/ (boulder, relay, rover)
+    ])
     # Headless mode: server only (no GUI), useful for CI or remote machines
     gazebo_headless = ExecuteProcess(
         cmd=["ign", "gazebo", "-r", "-s", world_file, "--headless-rendering"],
         condition=IfCondition(headless),
         output="screen",
+        additional_env={
+            "IGN_GAZEBO_RESOURCE_PATH": _resource_path,
+            "GZ_SIM_RESOURCE_PATH": _resource_path,
+        },
     )
     # GUI mode: full Gazebo window
     gazebo_gui = ExecuteProcess(
         cmd=["ign", "gazebo", "-r", world_file],
         condition=UnlessCondition(headless),
         output="screen",
-        additional_env={"IGN_GAZEBO_RESOURCE_PATH": str(GAZEBO_WORLDS.parent)},
+        additional_env={
+            "IGN_GAZEBO_RESOURCE_PATH": _resource_path,
+            "GZ_SIM_RESOURCE_PATH": _resource_path,
+        },
     )
 
     # ── ros_gz_bridge — /clock + sensor bridges ───────────────────────────────
@@ -271,14 +282,16 @@ def generate_launch_description() -> LaunchDescription:
             "use_sim_time": use_sim_time,
             "autostart": True,
             "node_names": [
-                "lpas/fault_detection_node",
+                # wheel_control first: must be active to broadcast odom→base_footprint TF
+                "lpas/wheel_control_node",
                 "lpas/thermal_monitor_node",
                 "lpas/comms_node",
-                "lpas/wheel_control_node",
-                "lpas/hazard_detection_node",
-                "lpas/autonomy_manager_node",
+                # fault_detection excluded: watchdog load from unconfigured hazard_detection
+                #   causes bond timeout (>8s) before activation completes
+                # hazard_detection excluded: cv_bridge/numpy-2.x ABI mismatch
+                # autonomy_manager excluded: self-manages its own state machine
             ],
-            "bond_timeout": 8.0,
+            "bond_timeout": 0.0,
             "attempt_respawn_reconnection": True,
         }],
     )

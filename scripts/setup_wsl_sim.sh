@@ -50,7 +50,11 @@ else
 fi
 
 # Source ROS2 for the remainder of this script
+# set +u temporarily: ROS2 setup.bash references AMENT_TRACE_SETUP_FILES
+# which may not be set, causing an error under set -u
+set +u
 source /opt/ros/${ROS_DISTRO}/setup.bash
+set -u
 
 # =============================================================================
 # 3. Ignition Gazebo Fortress
@@ -104,8 +108,14 @@ ok "ROS2 stack packages installed"
 # =============================================================================
 log "Installing Python packages (PyTorch, ONNX Runtime, OpenCV, etc.)..."
 pip3 install --quiet --upgrade pip
+# Reinstall sympy/numpy without uninstalling (--ignore-installed bypasses the
+# distutils-uninstall error on system-installed packages that pip can't remove)
+pip3 install --quiet --ignore-installed sympy numpy
+# Install PyTorch CPU build from its own index first (separate from other packages
+# because --index-url applies per-invocation and would hide PyPI packages)
+pip3 install --quiet torch torchvision --index-url https://download.pytorch.org/whl/cpu
+# Install remaining packages from PyPI
 pip3 install --quiet \
-    torch torchvision --index-url https://download.pytorch.org/whl/cpu \
     onnx \
     onnxruntime \
     opencv-python-headless \
@@ -127,7 +137,7 @@ log "Initialising rosdep..."
 if [ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]; then
     sudo rosdep init
 fi
-rosdep update --quiet
+rosdep update
 ok "rosdep ready"
 
 # =============================================================================
@@ -143,7 +153,9 @@ ok "rosdep dependencies installed"
 # =============================================================================
 log "Building ros2_ws with colcon (this may take 2-5 minutes)..."
 cd "${REPO_ROOT}/ros2_ws"
+set +u
 source /opt/ros/${ROS_DISTRO}/setup.bash
+set -u
 
 colcon build \
     --symlink-install \

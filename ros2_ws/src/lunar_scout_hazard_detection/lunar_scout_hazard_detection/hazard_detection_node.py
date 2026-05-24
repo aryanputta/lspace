@@ -63,8 +63,10 @@ except ImportError:
 try:
     from cv_bridge import CvBridge, CvBridgeError
     _HAS_CV_BRIDGE = True
-except ImportError:
+except (ImportError, AttributeError):
+    # AttributeError: _ARRAY_API not found — numpy 2.x ABI mismatch with cv_bridge 1.x
     _HAS_CV_BRIDGE = False
+    CvBridgeError = Exception  # type: ignore[assignment,misc]
 
 try:
     import onnxruntime as ort
@@ -428,10 +430,12 @@ class HazardDetectionNode(LifecycleNode):
         self.get_logger().info("Configuring hazard detection node…")
 
         if not _HAS_CV_BRIDGE:
-            self.get_logger().error("cv_bridge not available — cannot configure")
-            return TransitionCallbackReturn.FAILURE
-
-        self._bridge = CvBridge()
+            self.get_logger().warn(
+                "cv_bridge unavailable (numpy 2.x ABI mismatch) — "
+                "image-based hazard detection disabled; LiDAR path still active"
+            )
+        else:
+            self._bridge = CvBridge()
 
         baseline = self.get_parameter("stereo_baseline_m").get_parameter_value().double_value
         focal = self.get_parameter("focal_length_px").get_parameter_value().double_value

@@ -50,8 +50,10 @@ from nav_msgs.msg import OccupancyGrid
 try:
     from cv_bridge import CvBridge, CvBridgeError
     _HAS_CV_BRIDGE = True
-except ImportError:
+except (ImportError, AttributeError):
+    # AttributeError: _ARRAY_API not found — numpy 2.x ABI mismatch with cv_bridge 1.x
     _HAS_CV_BRIDGE = False
+    CvBridgeError = Exception  # type: ignore[assignment,misc]
 
 try:
     import onnxruntime as ort

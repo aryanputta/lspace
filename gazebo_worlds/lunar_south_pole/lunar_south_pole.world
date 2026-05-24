@@ -62,7 +62,8 @@
           <speed>0</speed>
         </clouds>
       </sky>
-      <shadows>true</shadows>
+      <!-- Shadows disabled: WSL2 Mesa D3D12 lacks GL3PlusTextureGpu::copyTo -->
+      <shadows>false</shadows>
       <fog>
         <!-- No fog - vacuum environment -->
         <type>none</type>
@@ -71,7 +72,7 @@
 
     <!-- Directional sun light - low-angle, casting very long shadows -->
     <light name="sun" type="directional">
-      <cast_shadows>true</cast_shadows>
+      <cast_shadows>false</cast_shadows>
       <pose>0 0 10 0 0 0</pose>
       <!-- Direction vector pointing toward the light source -->
       <direction>0.0 0.9994 -0.0349</direction>
@@ -94,23 +95,8 @@
       <specular>0 0 0 1</specular>
     </light>
 
-    <!-- ================================================================
-         PLUGINS
-         ================================================================ -->
-    <!-- Lunar gravity system plugin (overrides world gravity at runtime) -->
-    <plugin filename="liblunargravity_plugin.so" name="lunar_gravity_plugin">
-      <gravity_z>-1.62</gravity_z>
-    </plugin>
-
-    <!-- Regolith terrain friction/contact plugin -->
-    <plugin filename="libregolith_terrain_plugin.so" name="regolith_terrain_plugin">
-      <cohesion_kPa>0.17</cohesion_kPa>
-      <friction_angle_deg>35.0</friction_angle_deg>
-      <deformation_exponent>1.1</deformation_exponent>
-      <sinkage_modulus_kPa>5.0</sinkage_modulus_kPa>
-      <static_friction>0.7</static_friction>
-      <dynamic_friction>0.6</dynamic_friction>
-    </plugin>
+    <!-- Gravity (-1.62 m/s²) and regolith friction are set directly in
+         <physics> and terrain <surface> blocks above — no custom plugins needed. -->
 
     <!-- ================================================================
          TERRAIN HEIGHTMAP
@@ -121,17 +107,15 @@
     <model name="terrain">
       <static>true</static>
       <link name="terrain_link">
+        <!-- Flat regolith plane — replaces DEM heightmap until a properly
+             formatted 16-bit grayscale PNG is generated via process_dem_to_gazebo.py.
+             The DEM PNG was triggering Image.cc:478 "Coordinates out of range" spam. -->
         <collision name="terrain_collision">
           <geometry>
-            <heightmap>
-              <uri>model://lunar_south_pole/lunar_south_pole_dem.png</uri>
-              <!-- World size: 512 pixels × 50 m/pixel = 25,600 m per side -->
-              <size>25600 25600 6000</size>
-              <!-- Center the terrain at world origin -->
-              <pos>0 0 0</pos>
-              <use_terrain_paging>true</use_terrain_paging>
-              <sampling>2</sampling>
-            </heightmap>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>5000 5000</size>
+            </plane>
           </geometry>
           <surface>
             <friction>
@@ -167,36 +151,17 @@
         </collision>
         <visual name="terrain_visual">
           <geometry>
-            <heightmap>
-              <uri>model://lunar_south_pole/lunar_south_pole_dem.png</uri>
-              <size>25600 25600 6000</size>
-              <pos>0 0 0</pos>
-              <!-- Regolith texture layers - blend based on elevation/slope -->
-              <texture>
-                <diffuse>model://lunar_south_pole/regolith_albedo.png</diffuse>
-                <normal>model://lunar_south_pole/regolith_normal.png</normal>
-                <size>10</size>
-              </texture>
-              <texture>
-                <diffuse>model://lunar_south_pole/crater_floor.png</diffuse>
-                <normal>model://lunar_south_pole/crater_floor_normal.png</normal>
-                <size>5</size>
-              </texture>
-              <texture>
-                <diffuse>model://lunar_south_pole/ice_regolith.png</diffuse>
-                <normal>model://lunar_south_pole/ice_normal.png</normal>
-                <size>3</size>
-              </texture>
-              <blend>
-                <min_height>-500</min_height>
-                <fade_dist>200</fade_dist>
-              </blend>
-              <blend>
-                <min_height>-200</min_height>
-                <fade_dist>100</fade_dist>
-              </blend>
-            </heightmap>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>5000 5000</size>
+            </plane>
           </geometry>
+          <material>
+            <!-- Lunar regolith albedo ~0.12 (Apollo measurements) -->
+            <ambient>0.10 0.09 0.08 1</ambient>
+            <diffuse>0.14 0.13 0.11 1</diffuse>
+            <specular>0.01 0.01 0.01 1</specular>
+          </material>
         </visual>
       </link>
     </model>
