@@ -79,7 +79,7 @@ RELIABLE_QOS = QoSProfile(
     reliability=QoSReliabilityPolicy.RELIABLE,
     history=QoSHistoryPolicy.KEEP_LAST,
     depth=5,
-    durability=QoSDurabilityPolicy.VOLATILE,
+    durability=QoSDurabilityPolicy.TRANSIENT_LOCAL,
 )
 
 # ---------------------------------------------------------------------------

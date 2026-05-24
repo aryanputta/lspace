@@ -50,7 +50,7 @@ from rclpy.callback_groups import ReentrantCallbackGroup, MutuallyExclusiveCallb
 from std_msgs.msg import Header, String
 from std_srvs.srv import Trigger
 from sensor_msgs.msg import Image, LaserScan, CameraInfo
-from geometry_msgs.msg import Point, BoundingBox2D, Pose2D
+from geometry_msgs.msg import Point, Pose2D
 from nav_msgs.msg import OccupancyGrid
 from builtin_interfaces.msg import Time
 
@@ -88,11 +88,13 @@ SENSOR_QOS = QoSProfile(
     durability=QoSDurabilityPolicy.VOLATILE,
 )
 
+# TRANSIENT_LOCAL so late-joining subscribers (e.g. autonomy_manager) get the
+# last published state — matches the durability used across the rest of the stack.
 RELIABLE_QOS = QoSProfile(
     reliability=QoSReliabilityPolicy.RELIABLE,
     history=QoSHistoryPolicy.KEEP_LAST,
     depth=10,
-    durability=QoSDurabilityPolicy.VOLATILE,
+    durability=QoSDurabilityPolicy.TRANSIENT_LOCAL,
 )
 
 # ---------------------------------------------------------------------------

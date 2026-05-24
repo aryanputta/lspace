@@ -1,0 +1,45 @@
+# ROS2 workspace build artifacts
+ros2_ws/build/
+ros2_ws/install/
+ros2_ws/log/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ONNX model exports (generated, not committed)
+autonomy_models/onnx_exports/
+
+# Terrain data (large NASA datasets, downloaded separately)
+terrain_data/lola_dem/*.png
+terrain_data/lola_dem/*.tif
+terrain_data/lroc_nac/
+terrain_data/processed/
+
+# STK and MATLAB outputs
+stk_analysis/coverage_reports/*.html
+stk_analysis/scenarios/*.stk
+thermal_analysis/matlab_models/*.mat
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs
+*.log

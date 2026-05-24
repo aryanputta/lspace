@@ -76,7 +76,7 @@
       <!-- Direction vector pointing toward the light source -->
       <direction>0.0 0.9994 -0.0349</direction>
       <!-- Slightly warm sunlight (no atmospheric scattering, raw solar) -->
-      <diffuse>1.2 1.1 0.9 1</diffuse>
+      <diffuse>1.0 0.95 0.85 1</diffuse>
       <specular>0.5 0.5 0.4 1</specular>
       <attenuation>
         <range>1000</range>
