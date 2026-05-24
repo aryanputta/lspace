@@ -347,3 +347,8 @@ velocity_smoother:
     odom_duration: 0.1
     deadband_velocity: [0.0, 0.0, 0.0]
     velocity_timeout: 1.0
+
+# Nav2 lifecycle manager — disable bond keepalive (WSL2 timing incompatible)
+lifecycle_manager_navigation:
+  ros__parameters:
+    bond_timeout: 0.0
