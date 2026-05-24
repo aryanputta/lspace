@@ -1,0 +1,101 @@
+{
+  "total_assembly_mass_kg": 91.95,
+  "components": [
+    {
+      "name": "chassis_body",
+      "mass_kg": 45.0,
+      "nx_part": "chassis/LPAS-STRUCT-010.prt"
+    },
+    {
+      "name": "wheel_assembly",
+      "mass_kg": 2.5,
+      "nx_part": "wheels/LPAS-WHEEL-001.prt"
+    },
+    {
+      "name": "rocker_arm_left",
+      "mass_kg": 3.5,
+      "nx_part": "suspension/LPAS-SUSP-031.prt"
+    },
+    {
+      "name": "rocker_arm_right",
+      "mass_kg": 3.5,
+      "nx_part": "suspension/LPAS-SUSP-032.prt"
+    },
+    {
+      "name": "bogie_arm_left",
+      "mass_kg": 2.0,
+      "nx_part": "suspension/LPAS-SUSP-033.prt"
+    },
+    {
+      "name": "bogie_arm_right",
+      "mass_kg": 2.0,
+      "nx_part": "suspension/LPAS-SUSP-034.prt"
+    },
+    {
+      "name": "diff_bar",
+      "mass_kg": 1.5,
+      "nx_part": "suspension/LPAS-SUSP-035.prt"
+    },
+    {
+      "name": "solar_array_panel",
+      "mass_kg": 4.0,
+      "nx_part": "power/LPAS-SOLAR-001.prt"
+    },
+    {
+      "name": "electronics_bay",
+      "mass_kg": 5.0,
+      "nx_part": "avionics/LPAS-EBOX-040.prt"
+    },
+    {
+      "name": "drill_mechanism",
+      "mass_kg": 8.5,
+      "nx_part": "science/LPAS-DRILL-001.prt"
+    },
+    {
+      "name": "spectrometer",
+      "mass_kg": 4.8,
+      "nx_part": "science/LPAS-SPEC-001.prt"
+    },
+    {
+      "name": "uhf_antenna",
+      "mass_kg": 0.8,
+      "nx_part": "comms/LPAS-UHF-001.prt"
+    },
+    {
+      "name": "hga_dish",
+      "mass_kg": 1.2,
+      "nx_part": "comms/LPAS-HGA-DISH.prt"
+    },
+    {
+      "name": "hga_mast",
+      "mass_kg": 1.2,
+      "nx_part": "comms/LPAS-HGA-MAST.prt"
+    },
+    {
+      "name": "nav_cam_assembly",
+      "mass_kg": 0.9,
+      "nx_part": "sensors/LPAS-NAVCAM-001.prt"
+    },
+    {
+      "name": "hazcam_front",
+      "mass_kg": 0.3,
+      "nx_part": "sensors/LPAS-HAZCAM-F.prt"
+    },
+    {
+      "name": "lidar_housing",
+      "mass_kg": 0.85,
+      "nx_part": "sensors/LPAS-LIDAR-001.prt"
+    },
+    {
+      "name": "science_bay",
+      "mass_kg": 3.2,
+      "nx_part": "science/LPAS-SBAY-001.prt"
+    },
+    {
+      "name": "thermal_radiator",
+      "mass_kg": 1.2,
+      "nx_part": "thermal/LPAS-RAD-001.prt"
+    }
+  ],
+  "nx_available": false
+}

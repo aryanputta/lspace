@@ -6,9 +6,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
-find_package(xacro REQUIRED)
-find_package(robot_state_publisher REQUIRED)
-find_package(joint_state_publisher REQUIRED)
 
 # Install URDF/XACRO files
 install(
@@ -20,12 +17,6 @@ install(
 install(
   DIRECTORY meshes/
   DESTINATION share/${PROJECT_NAME}/meshes
-)
-
-# Install launch files
-install(
-  DIRECTORY launch/
-  DESTINATION share/${PROJECT_NAME}/launch
 )
 
 # Install config files

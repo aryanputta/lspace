@@ -1,0 +1,514 @@
+<?xml version="1.0"?>
+<!-- LPAS Rover — NX mesh assembly for Gazebo -->
+<sdf version="1.8">
+  <model name="lpas_rover">
+    <static>false</static>
+    <link name="chassis">
+      <pose>0 0 0.35 0 0 0</pose>
+      <inertial>
+        <mass>91.95</mass>
+        <inertia>
+          <ixx>4.71</ixx>
+          <ixy>0</ixy><ixz>0</ixz>
+          <iyy>16.78</iyy>
+          <iyz>0</iyz>
+          <izz>17.96</izz>
+        </inertia>
+      </inertial>
+      
+      <visual name="chassis_body_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/chassis_body.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.72 1</ambient>
+          <diffuse>0.7 0.7 0.72 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+        </material>
+      </visual>
+      <collision name="chassis_body_collision">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/chassis_body.stl</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction><ode><mu>0.7</mu><mu2>0.55</mu2></ode></friction>
+          <contact><ode><kp>1000000</kp><kd>100</kd></ode></contact>
+        </surface>
+      </collision>
+
+      <visual name="wheel_assembly_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/wheel_assembly.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.72 1</ambient>
+          <diffuse>0.7 0.7 0.72 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+        </material>
+      </visual>
+      <collision name="wheel_assembly_collision">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/wheel_assembly.stl</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction><ode><mu>0.7</mu><mu2>0.55</mu2></ode></friction>
+          <contact><ode><kp>1000000</kp><kd>100</kd></ode></contact>
+        </surface>
+      </collision>
+
+      <visual name="rocker_arm_left_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/rocker_arm_left.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.72 1</ambient>
+          <diffuse>0.7 0.7 0.72 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+        </material>
+      </visual>
+      <collision name="rocker_arm_left_collision">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/rocker_arm_left.stl</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction><ode><mu>0.7</mu><mu2>0.55</mu2></ode></friction>
+          <contact><ode><kp>1000000</kp><kd>100</kd></ode></contact>
+        </surface>
+      </collision>
+
+      <visual name="rocker_arm_right_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/rocker_arm_right.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.72 1</ambient>
+          <diffuse>0.7 0.7 0.72 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+        </material>
+      </visual>
+      <collision name="rocker_arm_right_collision">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/rocker_arm_right.stl</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction><ode><mu>0.7</mu><mu2>0.55</mu2></ode></friction>
+          <contact><ode><kp>1000000</kp><kd>100</kd></ode></contact>
+        </surface>
+      </collision>
+
+      <visual name="bogie_arm_left_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/bogie_arm_left.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.72 1</ambient>
+          <diffuse>0.7 0.7 0.72 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+        </material>
+      </visual>
+      <collision name="bogie_arm_left_collision">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/bogie_arm_left.stl</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction><ode><mu>0.7</mu><mu2>0.55</mu2></ode></friction>
+          <contact><ode><kp>1000000</kp><kd>100</kd></ode></contact>
+        </surface>
+      </collision>
+
+      <visual name="bogie_arm_right_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/bogie_arm_right.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.72 1</ambient>
+          <diffuse>0.7 0.7 0.72 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+        </material>
+      </visual>
+      <collision name="bogie_arm_right_collision">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/bogie_arm_right.stl</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction><ode><mu>0.7</mu><mu2>0.55</mu2></ode></friction>
+          <contact><ode><kp>1000000</kp><kd>100</kd></ode></contact>
+        </surface>
+      </collision>
+
+      <visual name="diff_bar_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/diff_bar.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.72 1</ambient>
+          <diffuse>0.7 0.7 0.72 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+        </material>
+      </visual>
+      <collision name="diff_bar_collision">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/diff_bar.stl</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction><ode><mu>0.7</mu><mu2>0.55</mu2></ode></friction>
+          <contact><ode><kp>1000000</kp><kd>100</kd></ode></contact>
+        </surface>
+      </collision>
+
+      <visual name="solar_array_panel_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/solar_array_panel.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.72 1</ambient>
+          <diffuse>0.7 0.7 0.72 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+        </material>
+      </visual>
+      <collision name="solar_array_panel_collision">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/solar_array_panel.stl</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction><ode><mu>0.7</mu><mu2>0.55</mu2></ode></friction>
+          <contact><ode><kp>1000000</kp><kd>100</kd></ode></contact>
+        </surface>
+      </collision>
+
+      <visual name="electronics_bay_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/electronics_bay.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.72 1</ambient>
+          <diffuse>0.7 0.7 0.72 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+        </material>
+      </visual>
+      <collision name="electronics_bay_collision">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/electronics_bay.stl</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction><ode><mu>0.7</mu><mu2>0.55</mu2></ode></friction>
+          <contact><ode><kp>1000000</kp><kd>100</kd></ode></contact>
+        </surface>
+      </collision>
+
+      <visual name="drill_mechanism_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/drill_mechanism.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.72 1</ambient>
+          <diffuse>0.7 0.7 0.72 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+        </material>
+      </visual>
+      <collision name="drill_mechanism_collision">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/drill_mechanism.stl</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction><ode><mu>0.7</mu><mu2>0.55</mu2></ode></friction>
+          <contact><ode><kp>1000000</kp><kd>100</kd></ode></contact>
+        </surface>
+      </collision>
+
+      <visual name="spectrometer_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/spectrometer.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.72 1</ambient>
+          <diffuse>0.7 0.7 0.72 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+        </material>
+      </visual>
+      <collision name="spectrometer_collision">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/spectrometer.stl</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction><ode><mu>0.7</mu><mu2>0.55</mu2></ode></friction>
+          <contact><ode><kp>1000000</kp><kd>100</kd></ode></contact>
+        </surface>
+      </collision>
+
+      <visual name="uhf_antenna_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/uhf_antenna.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.72 1</ambient>
+          <diffuse>0.7 0.7 0.72 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+        </material>
+      </visual>
+      <collision name="uhf_antenna_collision">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/uhf_antenna.stl</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction><ode><mu>0.7</mu><mu2>0.55</mu2></ode></friction>
+          <contact><ode><kp>1000000</kp><kd>100</kd></ode></contact>
+        </surface>
+      </collision>
+
+      <visual name="hga_dish_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/hga_dish.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.72 1</ambient>
+          <diffuse>0.7 0.7 0.72 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+        </material>
+      </visual>
+      <collision name="hga_dish_collision">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/hga_dish.stl</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction><ode><mu>0.7</mu><mu2>0.55</mu2></ode></friction>
+          <contact><ode><kp>1000000</kp><kd>100</kd></ode></contact>
+        </surface>
+      </collision>
+
+      <visual name="hga_mast_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/hga_mast.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.72 1</ambient>
+          <diffuse>0.7 0.7 0.72 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+        </material>
+      </visual>
+      <collision name="hga_mast_collision">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/hga_mast.stl</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction><ode><mu>0.7</mu><mu2>0.55</mu2></ode></friction>
+          <contact><ode><kp>1000000</kp><kd>100</kd></ode></contact>
+        </surface>
+      </collision>
+
+      <visual name="nav_cam_assembly_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/nav_cam_assembly.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.72 1</ambient>
+          <diffuse>0.7 0.7 0.72 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+        </material>
+      </visual>
+      <collision name="nav_cam_assembly_collision">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/nav_cam_assembly.stl</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction><ode><mu>0.7</mu><mu2>0.55</mu2></ode></friction>
+          <contact><ode><kp>1000000</kp><kd>100</kd></ode></contact>
+        </surface>
+      </collision>
+
+      <visual name="hazcam_front_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/hazcam_front.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.72 1</ambient>
+          <diffuse>0.7 0.7 0.72 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+        </material>
+      </visual>
+      <collision name="hazcam_front_collision">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/hazcam_front.stl</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction><ode><mu>0.7</mu><mu2>0.55</mu2></ode></friction>
+          <contact><ode><kp>1000000</kp><kd>100</kd></ode></contact>
+        </surface>
+      </collision>
+
+      <visual name="lidar_housing_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/lidar_housing.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.72 1</ambient>
+          <diffuse>0.7 0.7 0.72 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+        </material>
+      </visual>
+      <collision name="lidar_housing_collision">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/lidar_housing.stl</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction><ode><mu>0.7</mu><mu2>0.55</mu2></ode></friction>
+          <contact><ode><kp>1000000</kp><kd>100</kd></ode></contact>
+        </surface>
+      </collision>
+
+      <visual name="science_bay_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/science_bay.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.72 1</ambient>
+          <diffuse>0.7 0.7 0.72 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+        </material>
+      </visual>
+      <collision name="science_bay_collision">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/science_bay.stl</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction><ode><mu>0.7</mu><mu2>0.55</mu2></ode></friction>
+          <contact><ode><kp>1000000</kp><kd>100</kd></ode></contact>
+        </surface>
+      </collision>
+
+      <visual name="thermal_radiator_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/thermal_radiator.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.72 1</ambient>
+          <diffuse>0.7 0.7 0.72 1</diffuse>
+          <specular>0.4 0.4 0.4 1</specular>
+        </material>
+      </visual>
+      <collision name="thermal_radiator_collision">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/thermal_radiator.stl</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction><ode><mu>0.7</mu><mu2>0.55</mu2></ode></friction>
+          <contact><ode><kp>1000000</kp><kd>100</kd></ode></contact>
+        </surface>
+      </collision>
+    </link>
+  </model>
+</sdf>

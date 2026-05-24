@@ -1,5 +1,140 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-<!-- NASA heritage model mesh references â€” auto-generated -->
+<!-- NASA heritage model mesh references — auto-generated -->
+
+  <!-- Heritage: Curiosity Rover Body (NASA-3D-Resources) -->
+  <xacro:macro name="chassis_body_heritage_mesh" params="">
+    <visual>
+      <geometry>
+        <mesh filename="package://lunar_scout_description/meshes/chassis_body.stl"
+              scale="1 1 1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://lunar_scout_description/meshes/chassis_body.stl"/>
+      </geometry>
+    </collision>
+  </xacro:macro>
+
+  <!-- Heritage: Curiosity ChemCam (NASA-3D-Resources) -->
+  <xacro:macro name="nav_cam_assembly_heritage_mesh" params="">
+    <visual>
+      <geometry>
+        <mesh filename="package://lunar_scout_description/meshes/nav_cam_assembly.stl"
+              scale="1 1 1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://lunar_scout_description/meshes/nav_cam_assembly.stl"/>
+      </geometry>
+    </collision>
+  </xacro:macro>
+
+  <!-- Heritage: Curiosity RTG (enclosure geometry only) (NASA-3D-Resources) -->
+  <xacro:macro name="electronics_bay_heritage_mesh" params="">
+    <visual>
+      <geometry>
+        <mesh filename="package://lunar_scout_description/meshes/electronics_bay.stl"
+              scale="1 1 1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://lunar_scout_description/meshes/electronics_bay.stl"/>
+      </geometry>
+    </collision>
+  </xacro:macro>
+
+  <!-- Heritage: Curiosity Wheels (NASA-3D-Resources) -->
+  <xacro:macro name="wheel_assembly_heritage_mesh" params="">
+    <visual>
+      <geometry>
+        <mesh filename="package://lunar_scout_description/meshes/wheel_assembly.stl"
+              scale="1 1 1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://lunar_scout_description/meshes/wheel_assembly.stl"/>
+      </geometry>
+    </collision>
+  </xacro:macro>
+
+  <!-- Heritage: Curiosity HGA (NASA-3D-Resources) -->
+  <xacro:macro name="hga_dish_heritage_mesh" params="">
+    <visual>
+      <geometry>
+        <mesh filename="package://lunar_scout_description/meshes/hga_dish.stl"
+              scale="1 1 1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://lunar_scout_description/meshes/hga_dish.stl"/>
+      </geometry>
+    </collision>
+  </xacro:macro>
+
+  <!-- Heritage: Curiosity Mast (NASA-3D-Resources) -->
+  <xacro:macro name="nav_cam_assembly_heritage_mesh" params="">
+    <visual>
+      <geometry>
+        <mesh filename="package://lunar_scout_description/meshes/nav_cam_assembly.stl"
+              scale="1 1 1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://lunar_scout_description/meshes/nav_cam_assembly.stl"/>
+      </geometry>
+    </collision>
+  </xacro:macro>
+
+  <!-- Heritage: Curiosity Rocker (NASA-3D-Resources) -->
+  <xacro:macro name="rocker_arm_left_heritage_mesh" params="">
+    <visual>
+      <geometry>
+        <mesh filename="package://lunar_scout_description/meshes/rocker_arm_left.stl"
+              scale="1 1 1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://lunar_scout_description/meshes/rocker_arm_left.stl"/>
+      </geometry>
+    </collision>
+  </xacro:macro>
+
+  <!-- Heritage: Curiosity Bogie (NASA-3D-Resources) -->
+  <xacro:macro name="bogie_arm_left_heritage_mesh" params="">
+    <visual>
+      <geometry>
+        <mesh filename="package://lunar_scout_description/meshes/bogie_arm_left.stl"
+              scale="1 1 1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://lunar_scout_description/meshes/bogie_arm_left.stl"/>
+      </geometry>
+    </collision>
+  </xacro:macro>
+
+  <!-- Heritage: Curiosity Solar Panel (NASA-3D-Resources) -->
+  <xacro:macro name="solar_array_panel_heritage_mesh" params="">
+    <visual>
+      <geometry>
+        <mesh filename="package://lunar_scout_description/meshes/solar_array_panel.stl"
+              scale="1 1 1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://lunar_scout_description/meshes/solar_array_panel.stl"/>
+      </geometry>
+    </collision>
+  </xacro:macro>
 
 </robot>

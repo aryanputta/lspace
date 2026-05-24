@@ -1381,13 +1381,7 @@ def main(args=None) -> None:
     executor.add_node(node)
 
     try:
-        node.get_logger().info(
-            "Autonomy Manager starting - transitioning through lifecycle..."
-        )
-        # In production, lifecycle transitions are managed by lifecycle_manager
-        # For standalone testing, auto-configure and activate
-        node.trigger_configure()
-        node.trigger_activate()
+        node.get_logger().info("Autonomy Manager starting - awaiting lifecycle transitions")
         executor.spin()
     except KeyboardInterrupt:
         node.get_logger().info("Keyboard interrupt received, shutting down")
@@ -1395,8 +1389,6 @@ def main(args=None) -> None:
         node.get_logger().fatal(f"Unhandled exception: {exc}")
         raise
     finally:
-        node.trigger_deactivate()
-        node.trigger_cleanup()
         node.destroy_node()
         rclpy.shutdown()
 

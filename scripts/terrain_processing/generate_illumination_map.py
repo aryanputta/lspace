@@ -13,6 +13,7 @@ import numpy as np
 from PIL import Image
 from scipy.ndimage import uniform_filter
 
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 N_SUN_POSITIONS: int = 72
 SUN_ELEVATION_DEG: float = 1.54
@@ -224,7 +225,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output_dir",
         type=str,
-        default="terrain_data/processed",
+        default=str(PROJECT_ROOT / "terrain_data" / "processed"),
         help="Output directory for illumination products.",
     )
     parser.add_argument(

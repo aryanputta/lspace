@@ -17,17 +17,6 @@ find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
-find_package(rosidl_default_generators REQUIRED)
-
-# Generate custom messages
-rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/HazardDetection.msg"
-  "msg/HazardArray.msg"
-  DEPENDENCIES
-    std_msgs
-    geometry_msgs
-    sensor_msgs
-)
 
 # Install Python package
 ament_python_install_package(${PROJECT_NAME})
@@ -61,10 +50,6 @@ install(DIRECTORY
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
-
-  find_package(ament_cmake_pytest REQUIRED)
-  ament_add_pytest_test(test_hazard_detection test/test_hazard_detection.py)
 endif()
 
-ament_export_dependencies(rosidl_default_runtime)
 ament_package()

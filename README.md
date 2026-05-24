@@ -1,239 +1,192 @@
 # Lunar PSR Autonomy Scout (LPAS)
 
-**AI-Assisted Rover and Surface Relay Architecture for Artemis Lunar South Pole Operations**
+**A fully simulated NASA-inspired lunar rover mission — ROS2 Humble · Gazebo Fortress · Nav2 · PyTorch AI stack**
 
 ---
 
-## Mission Overview
+## What this is
 
-The Lunar PSR Autonomy Scout is a NASA-inspired robotic precursor mission targeting the lunar south pole's Permanently Shadowed Regions (PSRs). Designed to support sustained Artemis-era human presence, LPAS autonomously characterizes water ice distribution, maps traversability, and validates surface infrastructure concepts under extreme cold and communication constraints.
+LPAS is a complete systems-engineering simulation of a robotic precursor mission targeting the lunar south pole's Permanently Shadowed Regions (PSRs). The idea came from wanting to build something that goes deeper than a generic rover demo — a project with real mission design documents behind it, a working autonomy stack, and a simulation you can actually launch and watch drive.
+
+The rover is designed to autonomously characterize water ice distribution in PSRs to support sustained Artemis-era human operations. That mission context drives every design decision: why the power system is solar-only (no RTG), why the rover has a rocker-bogie suspension, why Nav2 is tuned for 0.5 m/s lunar traverse, and why the QoS profiles on every ROS topic are explicit.
+
+**What's running now:**
+- Gazebo Fortress opens a photorealistic lunar south pole world with crater terrain and PSR shadows
+- The rover spawns with a 6-wheel rocker-bogie suspension, deployable solar panels, stereo cameras, LiDAR, and a science drill
+- Full ROS2 lifecycle node stack: wheel control, hazard detection, terrain segmentation, power management, thermal monitor, fault detection, comms, and autonomy manager
+- Nav2 + SLAM Toolbox activate 15 seconds after launch (once odometry TF is live)
+- RViz2 shows the robot model, TF tree, laser scan, and odometry
+
+---
+
+## Mission Design
 
 | Parameter | Value |
 |-----------|-------|
-| Total System Mass | < 202 kg (250 kg requirement) |
-| Mission Duration | 120 sols |
-| Traverse Distance | > 10 km cumulative |
-| Max Slope Capability | 25° |
-| Peak Solar Power | 200 W |
-| Battery Capacity | 150 Wh |
-| Downlink Rate | 1 Mbps (Ka-band relay) |
-| Autonomy Level | Hybrid (Level 2/3) |
-| Primary Science Target | 3 PSR sites, water ice characterization |
+| Target | Nobile Crater, 85.2°S — primary PSR site |
+| Mission Duration | 120 sols (primary) |
+| Traverse Distance | ≥ 10 km cumulative |
+| Science Goals | Water ice mapping, regolith mechanics, PSR radiation environment |
+| Autonomy Level | Hybrid AL-2/AL-3 (supervised traverse → full PSR autonomy) |
+| Power | 200 W peak solar, 150 Wh Li-Ion (no RTG) |
+| Mass | < 202 kg (meets 250 kg requirement with 15% margin) |
+| Comms | UHF → LRO relay → DSN, 1 Mbps Ka-band |
+
+The full Concept of Operations, Science Traceability Matrix, ICD, FMEA, and 9-document PDR package are in `pdr_documents/`. These aren't boilerplate — they trace directly to the simulation design.
 
 ---
 
 ## Repository Structure
 
 ```
-lunar-psr-autonomy-scout/
-├── cad/                          # CAD models and mechanical design
-│   ├── nx_models/                # Siemens NX assemblies
-│   ├── step_exports/             # STEP file exports
-│   └── mass_properties/          # Mass budget calculations
+lspace/
+├── ros2_ws/src/
+│   ├── lunar_scout_bringup/        # Launch files, Nav2/SLAM configs, RViz2
+│   ├── lunar_scout_description/    # URDF/XACRO + STL meshes from NX
+│   ├── lunar_scout_autonomy/       # Behavior-tree autonomy manager (lifecycle)
+│   ├── lunar_scout_navigation/     # Nav2 parameter tuning for lunar terrain
+│   ├── lunar_scout_hazard_detection/ # ONNX terrain segmentation + hazard detection
+│   ├── lunar_scout_power_management/ # Solar/battery power model
+│   ├── lunar_scout_thermal_monitor/  # Electronics bay thermal limits
+│   ├── lunar_scout_comms/          # Link budget + comms window manager
+│   ├── lunar_scout_wheel_control/  # Rocker-bogie kinematics + odom TF
+│   └── lunar_scout_fault_detection/ # FDIR state machine
 │
-├── ros2_ws/                      # ROS2 Humble workspace
-│   └── src/
-│       ├── lunar_scout_bringup/        # Launch files and configs
-│       ├── lunar_scout_description/    # URDF/XACRO robot model
-│       ├── lunar_scout_autonomy/       # Autonomy manager
-│       ├── lunar_scout_navigation/     # Navigation stack integration
-│       ├── lunar_scout_hazard_detection/ # AI hazard detection
-│       ├── lunar_scout_power_management/ # Power system management
-│       ├── lunar_scout_thermal_monitor/  # Thermal monitoring
-│       ├── lunar_scout_comms/          # Communications management
-│       ├── lunar_scout_science_payload/ # Science instruments
-│       ├── lunar_scout_wheel_control/   # Wheel traction control
-│       └── lunar_scout_fault_detection/ # FDIR system
+├── gazebo_worlds/
+│   ├── lunar_south_pole/           # Main sim world (SDF 1.9)
+│   └── models/                     # Terrain heightmap, rock fields, lander
 │
-├── gazebo_worlds/                # Gazebo Fortress simulation
-│   ├── lunar_south_pole/         # Main south pole world
-│   ├── psr_terrain/              # PSR interior world
-│   ├── models/                   # SDF models
-│   └── plugins/                  # Custom Gazebo plugins
+├── cad/
+│   ├── nx_models/                  # Siemens NX assembly tree + FEA setup
+│   ├── nx_models/mesh_exports/     # STL exports → also in description/meshes/
+│   └── mass_properties/            # CBE mass budget (JSON + CSV)
 │
-├── isaac_sim/                    # NVIDIA Isaac Sim environments
-│
-├── terrain_data/                 # NASA terrain datasets
-│   ├── lola_dem/                 # LOLA elevation maps
-│   ├── lroc_imagery/             # LROC NAC imagery
-│   ├── slope_maps/               # Computed slope maps
-│   ├── illumination_maps/        # Solar illumination analysis
-│   └── processed/                # Processed terrain products
-│
-├── autonomy_models/              # AI/ML models
-│   ├── pytorch_models/
-│   │   ├── terrain_segmentation/ # DeepLabV3+ terrain classifier
-│   │   ├── hazard_detection/     # Real-time obstacle detector
-│   │   ├── wheel_slip_prediction/ # Temporal slip predictor
-│   │   ├── traversability/       # BEV traversability estimator
-│   │   └── energy_prediction/    # Path energy predictor
-│   ├── onnx_exports/             # Deployment models
-│   ├── tensorrt_engines/         # TensorRT optimized
-│   └── benchmarks/               # Benchmark suite
-│
-├── thermal_analysis/             # Thermal engineering
-│   ├── matlab_models/            # MATLAB thermal networks
-│   ├── nx_thermal/               # NX Thermal exports
-│   └── radiator_sizing/          # Radiator trade analysis
-│
-├── stk_analysis/                 # Systems Tool Kit analysis
-│   ├── scenarios/                # STK scenario configs
-│   ├── coverage_reports/         # Coverage analysis
-│   └── comm_windows/             # Communication window reports
-│
-├── system_engineering/           # MBSE artifacts
-│   ├── sysml/                    # SysML diagrams
-│   ├── requirements/             # Requirements database
-│   ├── icds/                     # Interface Control Documents
-│   └── fmea/                     # Failure Mode analysis
-│
-├── pdr_documents/                # Preliminary Design Review package
-│   ├── 01_Science_Traceability_Matrix.md
-│   ├── 02_ConOps.md
-│   ├── 03_System_Requirements_Review.md
-│   ├── 04_ICD_Interface_Control_Document.md
-│   ├── 05_Verification_and_Validation_Plan.md
-│   ├── 06_Hazard_Analysis.md
-│   ├── 07_Mission_Operations_Timeline.md
-│   ├── 08_Work_Breakdown_Structure.md
-│   └── 09_Gantt_Schedule.md
-│
-├── trade_studies/                # Engineering trade studies
-│   ├── Mobility_Architecture_Trade.md
-│   ├── Power_Architecture_Trade.md
-│   └── Autonomy_Level_Trade.md
-│
-├── mission_budget/               # Resource budgets
-│   ├── Mass_Budget.md
-│   ├── Power_Budget.md
-│   ├── Thermal_Budget.md
-│   ├── Comms_Budget.md
-│   ├── Risk_Matrix.md
-│   └── FMEA.md
-│
-├── simulation_results/           # Simulation output data
-│   ├── mobility/                 # Wheel + terrain simulations
-│   ├── autonomy/                 # AI benchmark results
-│   ├── thermal/                  # Thermal analysis outputs
-│   └── comms/                    # Communication link analysis
-│
-├── scripts/                      # Utility scripts
-│   ├── terrain_processing/       # DEM download and processing
-│   ├── data_pipeline/            # Data ingestion pipeline
-│   └── benchmarks/               # Benchmark runners
-│
-└── docs/                         # References and papers
-    ├── references/               # NASA/JPL reference documents
-    └── papers/                   # Related research papers
+├── autonomy_models/pytorch_models/ # DeepLabV3+ terrain seg, hazard ONNX models
+├── terrain_data/                   # LOLA DEM tiles (downloaded separately)
+├── pdr_documents/                  # Full PDR package (9 documents)
+├── mission_budget/                 # Mass, power, thermal, comms budgets
+├── system_engineering/             # SysML, RTM, ICD, FMEA
+├── stk_analysis/                   # STK coverage + comm window analysis
+└── scripts/
+    └── setup_wsl_sim.sh            # One-command WSL2 install + build
+```
+
+---
+
+## Running the Simulation
+
+### Prerequisites
+WSL2 with Ubuntu 22.04 on Windows, or native Ubuntu 22.04.
+
+### One-time setup (~10 min)
+```bash
+# In WSL2 terminal:
+cd /mnt/c/Users/<you>/Code/apps/lspace    # adjust path
+bash scripts/setup_wsl_sim.sh
+```
+
+This installs ROS2 Humble, Ignition Gazebo Fortress, Nav2, SLAM Toolbox, all Python packages, builds the workspace, and configures `~/.bashrc`.
+
+### Launch
+```bash
+source ~/.bashrc
+ros2 launch lunar_scout_bringup lunar_scout_sim.launch.py
+```
+
+**What you'll see:**
+| Time | Event |
+|------|-------|
+| t = 0 s | Gazebo opens with lunar south pole world |
+| t = 5 s | Rover spawns at origin (gold chassis + blue solar panels) |
+| t = 8 s | RViz2 opens — robot model, TF tree, sensor displays |
+| t = 15 s | Nav2 + SLAM Toolbox activate |
+
+**Headless (no GUI window):**
+```bash
+ros2 launch lunar_scout_bringup lunar_scout_sim.launch.py headless:=true
+```
+
+### Verification
+```bash
+# Check TF chain
+ros2 run tf2_tools view_frames
+
+# Watch odometry
+ros2 topic echo /lpas/wheel_control/odometry
+
+# Confirm Nav2 is active
+ros2 action list    # should show /navigate_to_pose
 ```
 
 ---
 
 ## Software Stack
 
-### Robotics & Simulation
-| Tool | Version | Purpose |
-|------|---------|---------|
-| ROS2 | Humble Hawksbill | Robot middleware |
-| Gazebo | Fortress | Physics simulation |
-| NVIDIA Isaac Sim | 2023.1 | High-fidelity simulation |
-| RViz2 | Latest | Visualization |
-| Nav2 | Latest | Autonomous navigation |
-| SLAM Toolbox | Latest | Mapping |
+### Robotics
+| Component | Purpose |
+|-----------|---------|
+| ROS2 Humble | Robot middleware + lifecycle management |
+| Ignition Gazebo Fortress | Physics sim with lunar regolith terrain |
+| Nav2 | Autonomous navigation (tuned: max 0.5 m/s, cost functions for rough terrain) |
+| SLAM Toolbox | LiDAR-based online mapping |
+| ros_gz_bridge | Gazebo ↔ ROS2 topic bridge (`/clock`, sensors) |
 
-### AI & Autonomy
-| Tool | Version | Purpose |
-|------|---------|---------|
-| PyTorch | 2.1+ | Model training |
-| ONNX Runtime | 1.16+ | Deployment inference |
-| TensorRT | 8.6+ | GPU-optimized inference |
-| CUDA | 12.0+ | GPU acceleration |
-| OpenCV | 4.8+ | Computer vision |
+### Autonomy & AI
+| Component | Purpose |
+|-----------|---------|
+| PyTorch (CPU) | Terrain segmentation training (DeepLabV3+) |
+| ONNX Runtime | Deployed inference — hazard detection, traversability |
+| OpenCV | Stereo vision, image preprocessing |
+| py_trees | Behavior tree for mission management |
 
-### Mission Analysis
-| Tool | Purpose |
-|------|---------|
-| GMAT | Trajectory analysis |
-| STK / Python sim | Communication windows |
-| MATLAB | Thermal modeling |
-| astropy | Orbital mechanics |
-
-### Mechanical Design
-| Tool | Purpose |
-|------|---------|
-| Siemens NX | Primary CAD |
-| FreeCAD | Open-source cross-check |
+### Mechanical (CAD)
+The rover body is designed in Siemens NX with an Al-7075 honeycomb chassis, Ti-6Al-4V wheel mounts, and rocker-bogie kinematics matching JPL heritage geometry. All STL meshes are exported to `ros2_ws/src/lunar_scout_description/meshes/` and visible in the URDF. Structural analysis uses NX Nastran with 10g axial / 6g lateral launch loads.
 
 ---
 
-## Quick Start
+## Autonomy Architecture
 
-### 1. Build ROS2 Workspace
-```bash
-cd ros2_ws
-rosdep install --from-paths src --ignore-src -r -y
-colcon build --symlink-install
-source install/setup.bash
-```
+The autonomy manager is a ROS2 lifecycle node running a behavior tree with five states: `STANDBY → SURVEY → APPROACH_PSR → PSR_OPS → EMERGENCY_SAFE`.
 
-### 2. Launch Simulation
-```bash
-ros2 launch lunar_scout_bringup lunar_scout_sim.launch.py
-```
+The AI pipeline:
+1. Stereo hazcam images → ONNX hazard detection → obstacle costmap
+2. LiDAR + stereo → traversability estimation → Nav2 costmap layer
+3. Terrain segmentation (regolith class, rock density, slope) → path safety score
+4. ONNX wheel slip predictor → traction control feedback to Nav2 planner
 
-### 3. Process Terrain Data
-```bash
-cd scripts/terrain_processing
-python download_lola_dem.py --output ../../terrain_data/lola_dem/
-python process_dem_to_gazebo.py --input ../../terrain_data/lola_dem/south_pole_dem.tif
-python generate_illumination_map.py
-```
-
-### 4. Train AI Models
-```bash
-cd autonomy_models/pytorch_models/terrain_segmentation
-python train.py --epochs 100 --batch_size 8 --lr 1e-4 --data_dir ../../../terrain_data
-```
-
-### 5. Run Benchmarks
-```bash
-cd autonomy_models/benchmarks
-python benchmark_suite.py --models_dir ../onnx_exports
-```
-
----
-
-## Mission Heritage & References
-
-| Program | Reference |
-|---------|-----------|
-| VIPER | NASA VIPER rover architecture, TRIDENT drill system |
-| Perseverance | JPL rocker-bogie mobility, AutoNav system |
-| CLPS | Commercial Lunar Payload Services payload standards |
-| Lunar Flashlight | JPL CubeSat PSR mapping mission |
-| F Prime | JPL flight software framework |
-| Artemis | NASA south pole human landing site planning |
+All models fall back to heuristic-only mode when no ONNX file is present (default in sim).
 
 ---
 
 ## Engineering Standards
 
-- **Systems Engineering**: NASA-STD-0007, NASA/SP-2016-6105 (SE Handbook)
-- **Software**: NASA-STD-8739.8, JPL D-60411
-- **Safety**: MIL-STD-882E, NASA-STD-8719.13
-- **FMEA**: MIL-STD-1629A
-- **Mass Margin**: 15% per NASA mass margin policy
-- **Power Margin**: 25% per NASA power margin policy
+This project follows:
+- **Systems Engineering:** NASA-STD-0007, NASA/SP-2016-6105
+- **Software:** NASA-STD-8739.8, ROS2 lifecycle node contracts
+- **Safety:** MIL-STD-882E, FDIR three-level hierarchy
+- **FMEA:** MIL-STD-1629A
+- **Mass margin:** 15% CBE maintained throughout
+- **Power margin:** 25% maintained; no RTG (solar-only constraint)
 
 ---
 
-## Career Framing
+## What's Next
 
-> "Designed a NASA-style lunar south pole robotic precursor mission focused on autonomous PSR exploration, volatile characterization, surface infrastructure readiness, and AI-assisted rover operations supporting sustained Artemis-era human presence."
-
-**Target Roles:** NASA Pathways · JPL Robotics · SpaceX Starship Surface Systems · Blue Origin Lunar Systems · Lockheed Martin Space · Draper Lunar Navigation · RTX Space Systems · Astrobotic Robotics · NVIDIA Robotics & Autonomy
+- [ ] PSR interior world (`gazebo_worlds/psr_terrain/`) with thermal simulation
+- [ ] ONNX model training pipeline on LOLA DEM synthetic imagery
+- [ ] Science payload re-integration (drill actuation in Gazebo)
+- [ ] Rocker-bogie joint state feedback → real suspension animation
+- [ ] NVIDIA Isaac Sim environment (high-fidelity lighting/shadow for PSR)
+- [ ] Science autonomy module: onboard NS data interpretation + target scoring
 
 ---
 
-*Project Status: Preliminary Design Phase*
-*Last Updated: 2026-05-24*
+## Project Context
+
+This is a portfolio project targeting **NASA Pathways, JPL robotics, and aerospace autonomy roles**. The goal was to show what a real precursor mission looks like end-to-end: not just a URDF and a twist command, but a system with mass budgets, science objectives, QoS contracts, lifecycle ownership, and an FDIR hierarchy — backed by a running simulation.
+
+The mission design draws from VIPER, Perseverance AutoNav, LCROSS, and Artemis south pole planning. The PSR water ice targets (Nobile, Shackleton, Haworth) are the same sites NASA is actively studying for ISRU.
+
+---
+
+*Branch: `claude/lunar-psr-autonomy-scout-ba8EX` | Last Updated: 2026-05-24*

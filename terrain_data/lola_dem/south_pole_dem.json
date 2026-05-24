@@ -1,0 +1,22 @@
+{
+  "type": "synthetic",
+  "source": "fractional_brownian_motion",
+  "seed": 42,
+  "size_px": 1024,
+  "resolution_m": 97.65625,
+  "extent_km": 100.0,
+  "center_lat": -89.5,
+  "center_lon": 0.0,
+  "projection": "polar_stereographic",
+  "height_min_m": -3320.3075295684107,
+  "height_max_m": 2290.474760184332,
+  "height_rms_m": 989.9334901349225,
+  "features": [
+    "shackleton_analog_center",
+    "haworth_analog_NW",
+    "nobile_analog_SE",
+    "25_secondary_craters",
+    "fbm_terrain_H0.75"
+  ],
+  "warning": "SYNTHETIC DATA - NOT SUITABLE FOR MISSION PLANNING"
+}

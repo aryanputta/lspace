@@ -1,13 +1,14 @@
-# generate_placeholder_meshes.py — Generate placeholder ASCII STL meshes for LPAS lunar rover assembly components
+"""Generate placeholder ASCII STL meshes for LPAS rover components."""
 
 import math
-import os
 import shutil
+from pathlib import Path
 
 import numpy as np
 
-MESHES_DIR = "/home/user/lspace/ros2_ws/src/lunar_scout_description/meshes"
-EXPORT_DIR = "/home/user/lspace/cad/nx_models/mesh_exports"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+MESHES_DIR = PROJECT_ROOT / "ros2_ws" / "src" / "lunar_scout_description" / "meshes"
+EXPORT_DIR = PROJECT_ROOT / "cad" / "nx_models" / "mesh_exports"
 
 COMPONENTS = [
     {"name": "chassis_body",       "type": "box",      "dims": (1.5, 0.9, 0.4)},
@@ -127,17 +128,17 @@ def generate_stl(component: dict) -> str:
 
 
 def main() -> None:
-    os.makedirs(MESHES_DIR, exist_ok=True)
-    os.makedirs(EXPORT_DIR, exist_ok=True)
+    MESHES_DIR.mkdir(parents=True, exist_ok=True)
+    EXPORT_DIR.mkdir(parents=True, exist_ok=True)
 
     generated = []
     for comp in COMPONENTS:
         stl_content = generate_stl(comp)
         filename = comp["name"] + ".stl"
-        primary_path = os.path.join(MESHES_DIR, filename)
-        export_path = os.path.join(EXPORT_DIR, filename)
+        primary_path = MESHES_DIR / filename
+        export_path = EXPORT_DIR / filename
 
-        with open(primary_path, "w") as fh:
+        with primary_path.open("w", encoding="utf-8") as fh:
             fh.write(stl_content)
         shutil.copy2(primary_path, export_path)
 

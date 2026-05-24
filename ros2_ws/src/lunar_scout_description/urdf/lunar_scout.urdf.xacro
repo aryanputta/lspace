@@ -10,6 +10,9 @@
 -->
 <robot name="lunar_scout" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
+  <!-- STL meshes exported from NX CAD at 1:1 scale (meters) -->
+  <xacro:property name="MESH_PKG" value="package://lunar_scout_description/meshes"/>
+
   <!-- ============================================================
        PROPERTIES AND CONSTANTS
        ============================================================ -->
@@ -179,7 +182,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <box size="${rocker_length} ${rocker_width} ${rocker_height}"/>
+          <mesh filename="${MESH_PKG}/rocker_arm_${side}.stl" scale="1 1 1"/>
         </geometry>
         <material name="carbon_fiber"/>
       </visual>
@@ -207,7 +210,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="${PI/2} 0 0"/>
         <geometry>
-          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+          <mesh filename="${MESH_PKG}/wheel_assembly.stl" scale="1 1 1"/>
         </geometry>
         <material name="titanium_mesh"/>
       </visual>
@@ -252,7 +255,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <box size="${bogie_length} ${bogie_width} ${bogie_height}"/>
+          <mesh filename="${MESH_PKG}/bogie_arm_${side}.stl" scale="1 1 1"/>
         </geometry>
         <material name="carbon_fiber"/>
       </visual>
@@ -280,7 +283,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="${PI/2} 0 0"/>
         <geometry>
-          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+          <mesh filename="${MESH_PKG}/wheel_assembly.stl" scale="1 1 1"/>
         </geometry>
         <material name="titanium_mesh"/>
       </visual>
@@ -315,7 +318,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="${PI/2} 0 0"/>
         <geometry>
-          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+          <mesh filename="${MESH_PKG}/wheel_assembly.stl" scale="1 1 1"/>
         </geometry>
         <material name="titanium_mesh"/>
       </visual>
@@ -355,7 +358,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <box size="1.20 0.80 0.02"/>
+          <mesh filename="${MESH_PKG}/solar_array_panel.stl" scale="1 1 1"/>
         </geometry>
         <material name="solar_panel_blue"/>
       </visual>
@@ -403,7 +406,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
+        <mesh filename="${MESH_PKG}/chassis_body.stl" scale="1 1 1"/>
       </geometry>
       <material name="aluminum_gold"/>
     </visual>
@@ -421,7 +424,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <box size="0.50 0.80 0.30"/>
+        <mesh filename="${MESH_PKG}/electronics_bay.stl" scale="1 1 1"/>
       </geometry>
       <material name="white_thermal"/>
     </visual>
@@ -479,7 +482,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <cylinder radius="0.051" length="0.072"/>
+        <mesh filename="${MESH_PKG}/lidar_housing.stl" scale="1 1 1"/>
       </geometry>
       <material name="sensor_black"/>
     </visual>
@@ -506,7 +509,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <box size="0.04 0.04 0.35"/>
+        <mesh filename="${MESH_PKG}/mast_assembly.stl" scale="1 1 1"/>
       </geometry>
       <material name="carbon_fiber"/>
     </visual>
@@ -653,12 +656,11 @@
        HGA - High Gain Antenna (directional, X-band DTE comms)
        ============================================================ -->
   <link name="hga_link">
-    <!-- Parabolic dish approximated as cylinder + cone -->
     <xacro:cylinder_inertia m="1.2" r="0.22" h="0.05"/>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <cylinder radius="0.22" length="0.05"/>
+        <mesh filename="${MESH_PKG}/hga_dish.stl" scale="1 1 1"/>
       </geometry>
       <material name="antenna_white"/>
     </visual>
@@ -693,7 +695,7 @@
     <visual>
       <origin xyz="0 0 -0.30" rpy="0 0 0"/>
       <geometry>
-        <cylinder radius="0.04" length="0.60"/>
+        <mesh filename="${MESH_PKG}/drill_assembly.stl" scale="1 1 1"/>
       </geometry>
       <material name="science_gray"/>
     </visual>

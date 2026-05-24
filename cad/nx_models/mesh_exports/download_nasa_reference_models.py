@@ -50,9 +50,8 @@ NASA_MODELS = [
     NASAModel(
         name="Curiosity Rover Body",
         url=(RAW_BASE
-             + "/3D%20Printing/Curiosity%20Rover"
-             + "/Curiosity%20Rover%203D%20Printed%20Model"
-             + "/Detailed%20Curiosity%20Model%20(Large)/STL%20Files/body.STL"),
+             + "/3D%20Printing/Curiosity%20Rover%20(Detailed)"
+             + "/1-body.stl"),
         dest_name="nasa_curiosity_body.stl",
         lpas_use="Heritage reference for LPAS chassis structural layout",
         component_map="chassis_body",
@@ -61,11 +60,10 @@ NASA_MODELS = [
     NASAModel(
         name="Curiosity ChemCam",
         url=(RAW_BASE
-             + "/3D%20Printing/Curiosity%20Rover"
-             + "/Curiosity%20Rover%203D%20Printed%20Model"
-             + "/Detailed%20Curiosity%20Model%20(Large)/STL%20Files/chemcam.STL"),
+             + "/3D%20Printing/Curiosity%20Rover%20(Detailed)"
+             + "/2-components.stl"),
         dest_name="nasa_curiosity_chemcam.stl",
-        lpas_use="Heritage reference for LPAS instrument mast + nav camera assembly",
+        lpas_use="Heritage reference mesh bundle for LPAS instrument mast + nav camera assembly",
         component_map="nav_cam_assembly",
     ),
     # Mars Exploration Rover — Spirit/Opportunity wheel heritage
@@ -82,77 +80,70 @@ NASA_MODELS = [
     NASAModel(
         name="Curiosity RTG (enclosure geometry only)",
         url=(RAW_BASE
-             + "/3D%20Printing/Curiosity%20Rover"
-             + "/Curiosity%20Rover%203D%20Printed%20Model"
-             + "/Detailed%20Curiosity%20Model%20(Large)/STL%20Files/rtg.STL"),
+             + "/3D%20Printing/Curiosity%20Rover%20(Detailed)"
+             + "/2-components.stl"),
         dest_name="nasa_curiosity_rtg_enclosure.stl",
-        lpas_use="Electronics bay enclosure geometry heritage (not RTG — thermal reference only)",
+        lpas_use="Heritage reference mesh bundle for electronics bay enclosure geometry (not RTG power architecture)",
         component_map="electronics_bay",
     ),
     # Curiosity wheels
     NASAModel(
         name="Curiosity Wheels",
         url=(RAW_BASE
-             + "/3D%20Printing/Curiosity%20Rover"
-             + "/Curiosity%20Rover%203D%20Printed%20Model"
-             + "/Detailed%20Curiosity%20Model%20(Large)/STL%20Files/wheelLeft.STL"),
+             + "/3D%20Printing/Curiosity%20Rover%20(Detailed)"
+             + "/4-wheels.stl"),
         dest_name="nasa_curiosity_wheel_left.stl",
-        lpas_use="Heritage: Al-machined wheel geometry → LPAS uses Ti mesh variant",
+        lpas_use="Heritage wheel mesh bundle; LPAS uses a lunar-adapted wheel design",
         component_map="wheel_assembly",
     ),
     # Curiosity HGA (High Gain Antenna)
     NASAModel(
         name="Curiosity HGA",
         url=(RAW_BASE
-             + "/3D%20Printing/Curiosity%20Rover"
-             + "/Curiosity%20Rover%203D%20Printed%20Model"
-             + "/Detailed%20Curiosity%20Model%20(Large)/STL%20Files/hga.STL"),
+             + "/3D%20Printing/Curiosity%20Rover%20(Detailed)"
+             + "/2-components.stl"),
         dest_name="nasa_curiosity_hga.stl",
-        lpas_use="Heritage: HGA gimbal geometry for LPAS Ka-band HGA design",
+        lpas_use="Heritage reference mesh bundle for LPAS Ka-band HGA design",
         component_map="hga_dish",
     ),
     # Curiosity Mast
     NASAModel(
         name="Curiosity Mast",
         url=(RAW_BASE
-             + "/3D%20Printing/Curiosity%20Rover"
-             + "/Curiosity%20Rover%203D%20Printed%20Model"
-             + "/Detailed%20Curiosity%20Model%20(Large)/STL%20Files/mast.STL"),
+             + "/3D%20Printing/Curiosity%20Rover%20(Detailed)"
+             + "/2-components.stl"),
         dest_name="nasa_curiosity_mast.stl",
-        lpas_use="Heritage: sensor mast geometry for LPAS nav camera mast",
+        lpas_use="Heritage reference mesh bundle for LPAS nav camera mast",
         component_map="nav_cam_assembly",
     ),
     # Curiosity rocker bogie arm
     NASAModel(
         name="Curiosity Rocker",
         url=(RAW_BASE
-             + "/3D%20Printing/Curiosity%20Rover"
-             + "/Curiosity%20Rover%203D%20Printed%20Model"
-             + "/Detailed%20Curiosity%20Model%20(Large)/STL%20Files/rocker.STL"),
+             + "/3D%20Printing/Curiosity%20Rover%20(Detailed)"
+             + "/2-components.stl"),
         dest_name="nasa_curiosity_rocker.stl",
-        lpas_use="DIRECT heritage: rocker arm geometry dimensioning for LPAS suspension",
+        lpas_use="Heritage reference mesh bundle for LPAS rocker suspension geometry",
         component_map="rocker_arm_left",
     ),
     # Curiosity bogie
     NASAModel(
         name="Curiosity Bogie",
         url=(RAW_BASE
-             + "/3D%20Printing/Curiosity%20Rover"
-             + "/Curiosity%20Rover%203D%20Printed%20Model"
-             + "/Detailed%20Curiosity%20Model%20(Large)/STL%20Files/bogie.STL"),
+             + "/3D%20Printing/Curiosity%20Rover%20(Detailed)"
+             + "/2-components.stl"),
         dest_name="nasa_curiosity_bogie.stl",
-        lpas_use="DIRECT heritage: bogie arm geometry for LPAS front/rear bogie",
+        lpas_use="Heritage reference mesh bundle for LPAS front/rear bogie geometry",
         component_map="bogie_arm_left",
     ),
     # Curiosity solar panels (geometry only — LPAS also uses solar)
     NASAModel(
         name="Curiosity Solar Panel",
         url=(RAW_BASE
-             + "/3D%20Printing/Curiosity%20Rover"
-             + "/Curiosity%20Rover%203D%20Printed%20Model"
-             + "/Detailed%20Curiosity%20Model%20(Large)/STL%20Files/solar.STL"),
+             + "/3D%20Printing/Curiosity%20Rover%20(Detailed)"
+             + "/2-components.stl"),
         dest_name="nasa_curiosity_solar.stl",
-        lpas_use="Solar array structural geometry heritage for LPAS deployable panels",
+        lpas_use="Heritage reference mesh bundle for LPAS deployable panel geometry",
         component_map="solar_array_panel",
     ),
 ]

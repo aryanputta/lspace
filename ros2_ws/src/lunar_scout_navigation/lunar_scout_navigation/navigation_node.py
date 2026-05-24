@@ -492,9 +492,6 @@ class NavigationNode(Node):
         self._pub_waypoint_markers = self.create_publisher(
             MarkerArray, "/navigation/waypoint_markers", RELIABLE_QOS
         )
-        self._pub_heartbeat = self.create_publisher(
-            String, "/navigation/current_path", RELIABLE_QOS
-        )
         self.get_logger().info("Navigation publishers created")
 
     # ------------------------------------------------------------------

@@ -572,8 +572,14 @@ def write_markdown_report(
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Benchmark all lunar rover autonomy models")
-    p.add_argument("--onnx_dir", type=str, default="../onnx_exports",
-                   help="Directory containing exported ONNX models")
+    p.add_argument(
+        "--onnx_dir",
+        "--models_dir",
+        dest="onnx_dir",
+        type=str,
+        default="../onnx_exports",
+        help="Directory containing exported ONNX models",
+    )
     p.add_argument("--output_dir", type=str, default=".",
                    help="Directory to write benchmark reports")
     p.add_argument("--warmup", type=int, default=50,

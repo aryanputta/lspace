@@ -1,0 +1,23 @@
+{
+  "dem_rows": 257,
+  "dem_cols": 257,
+  "resolution_m": 30.0,
+  "n_sun_positions": 72,
+  "sun_elevation_deg": 1.54,
+  "sun_azimuth_step_deg": 5.0,
+  "psr_threshold_illumination_fraction": 0.01,
+  "psr_fraction": 0.5108,
+  "psr_area_km2": 30.37,
+  "total_area_km2": 59.44,
+  "mean_illumination": 0.1315,
+  "max_illumination": 1.0,
+  "min_illumination": 0.0,
+  "dem_min_m": -4013.14,
+  "dem_max_m": -2922.67,
+  "dem_mean_m": -3640.58,
+  "mean_slope_deg": 13.49,
+  "max_slope_deg": 37.36,
+  "traversable_fraction_15deg": 0.6004,
+  "psr_pixel_count": 33740,
+  "total_pixel_count": 66049
+}

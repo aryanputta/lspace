@@ -1,5 +1,31 @@
 <!-- LPAS heritage models for Gazebo reference display -->
 
+  <model name="heritage_chassis_body">
+    <static>true</static>
+    <link name="link">
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/chassis_body.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+
+  <model name="heritage_nav_cam_assembly">
+    <static>true</static>
+    <link name="link">
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/nav_cam_assembly.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+
   <model name="heritage_rocker_arm_left">
     <static>true</static>
     <link name="link">
@@ -7,6 +33,97 @@
         <geometry>
           <mesh>
             <uri>model://lpas_rover/meshes/rocker_arm_left.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+
+  <model name="heritage_electronics_bay">
+    <static>true</static>
+    <link name="link">
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/electronics_bay.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+
+  <model name="heritage_wheel_assembly">
+    <static>true</static>
+    <link name="link">
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/wheel_assembly.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+
+  <model name="heritage_hga_dish">
+    <static>true</static>
+    <link name="link">
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/hga_dish.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+
+  <model name="heritage_nav_cam_assembly">
+    <static>true</static>
+    <link name="link">
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/nav_cam_assembly.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+
+  <model name="heritage_rocker_arm_left">
+    <static>true</static>
+    <link name="link">
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/rocker_arm_left.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+
+  <model name="heritage_bogie_arm_left">
+    <static>true</static>
+    <link name="link">
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/bogie_arm_left.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+
+  <model name="heritage_solar_array_panel">
+    <static>true</static>
+    <link name="link">
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://lpas_rover/meshes/solar_array_panel.stl</uri>
           </mesh>
         </geometry>
       </visual>
