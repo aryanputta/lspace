@@ -181,9 +181,7 @@ This project follows:
 
 ---
 
-## Project Context
-
-This is a portfolio project targeting **NASA Pathways, JPL robotics, and aerospace autonomy roles**. The goal was to show what a real precursor mission looks like end-to-end: not just a URDF and a twist command, but a system with mass budgets, science objectives, QoS contracts, lifecycle ownership, and an FDIR hierarchy — backed by a running simulation.
+## Project Context.
 
 The mission design draws from VIPER, Perseverance AutoNav, LCROSS, and Artemis south pole planning. The PSR water ice targets (Nobile, Shackleton, Haworth) are the same sites NASA is actively studying for ISRU.
 
